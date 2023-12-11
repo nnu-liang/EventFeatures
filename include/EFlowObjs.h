@@ -20,6 +20,7 @@ private:
     TClonesArray *m_branchEFlowPhoton;         // Tower
     TClonesArray *m_branchEFlowNeutralHadron;  // Tower
     TClonesArray *m_branchEFlowTrack;          // Track
+    TClonesArray *m_branchParticle;            // Need to be loaded to get the refs to particles
 
     EFlowObjs_t m_objs;
 };
