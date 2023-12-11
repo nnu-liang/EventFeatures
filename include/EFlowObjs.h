@@ -33,7 +33,10 @@ public:
 
     int get_pid() const { return m_pid; }
     int get_charge() const { return m_charge; }
-    int get_d0() const { return m_d0; }
+    double get_d0() const { return m_d0; }
+    double get_d0err() const { return m_d0err; }
+    double get_dz() const { return m_dz; }
+    double get_dzerr() const { return m_dzerr; }
 
 private:
     int m_pid;
