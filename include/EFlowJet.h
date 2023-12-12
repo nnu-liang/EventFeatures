@@ -1,7 +1,10 @@
+#ifndef EFLOW_JET_H
+#define EFLOW_JET_H
+
 #include <vector>
 
 #include "EFlowObjs.h"
-#include "TTree"
+#include "TTree.h"
 #include "fastjet/JetDefinition.hh"
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/contribs/Nsubjettiness/AxesDefinition.hh"
@@ -17,7 +20,7 @@ public:
     ~EFlowJet();
 
     void SetUpBranch(TTree *t);
-    void FillTree(TTree *t);
+    void FillTree();
 
     void SetEFlowObjs(EFlowObjs::EFlowObjs_t &objs);
 
@@ -65,6 +68,9 @@ public:
     float aux_truth_match;
 
 private:
+    TTree *m_tree;  // * Pointer to the tree, but we don't own it;
+
+    fastjet::ClusterSequence *m_clust_seq;
     std::vector<fastjet::PseudoJet> m_jets;
     fastjet::JetAlgorithm m_jet_algorithm;
     fastjet::JetDefinition *m_JetDef;
@@ -73,7 +79,9 @@ private:
     double m_dR;
     double m_pt_min;
     double m_beta;  // * For Nsubjettiness
-    fastjet::contrib::Nsubjettiness nSub1, nSub2, nSub3, nSub4;
+    fastjet::contrib::Nsubjettiness *nSub1, *nSub2, *nSub3, *nSub4;
 
     void clean_particle_info();
 };
+
+#endif  // EFLOW_JET_H

@@ -1,22 +1,33 @@
 #include "EFlowJet.h"
 
-EFlowJet::EFlowJet() : m_jet_algorithm(fastjet::JetAlgorithm::antikt_algorithm), m_dR(0.8), m_pt_min(500), m_beta(1.0) {
+EFlowJet::EFlowJet()
+    : m_jet_algorithm(fastjet::JetAlgorithm::antikt_algorithm),
+      m_dR(0.8),
+      m_pt_min(500),
+      m_beta(1.0),
+      m_clust_seq(nullptr) {
     m_JetDef = new fastjet::JetDefinition(m_jet_algorithm, m_dR);
-    m_AxesDef = new KT_Axes();
-    m_MeasureDef = new NormalizedMeasure(m_beta, m_dR);
-    nSub1 = fastjet::contrib::Nsubjettiness(1, *m_AxesDef, *m_MeasureDef);
-    nSub2 = fastjet::contrib::Nsubjettiness(2, *m_AxesDef, *m_MeasureDef);
-    nSub3 = fastjet::contrib::Nsubjettiness(3, *m_AxesDef, *m_MeasureDef);
-    nSub4 = fastjet::contrib::Nsubjettiness(4, *m_AxesDef, *m_MeasureDef);
+    m_AxesDef = new fastjet::contrib::KT_Axes();
+    m_MeasureDef = new fastjet::contrib::NormalizedMeasure(m_beta, m_dR);
+    nSub1 = new fastjet::contrib::Nsubjettiness(1, *m_AxesDef, *m_MeasureDef);
+    nSub2 = new fastjet::contrib::Nsubjettiness(2, *m_AxesDef, *m_MeasureDef);
+    nSub3 = new fastjet::contrib::Nsubjettiness(3, *m_AxesDef, *m_MeasureDef);
+    nSub4 = new fastjet::contrib::Nsubjettiness(4, *m_AxesDef, *m_MeasureDef);
 }
 
 EFlowJet::~EFlowJet() {
     delete m_JetDef;
     delete m_AxesDef;
     delete m_MeasureDef;
+    delete nSub1;
+    delete nSub2;
+    delete nSub3;
+    delete nSub4;
+    if (m_clust_seq) delete m_clust_seq;
 }
 
 void EFlowJet::SetUpBranch(TTree *t) {
+    m_tree = t;
     t->Branch("part_px", &part_px);
     t->Branch("part_py", &part_py);
     t->Branch("part_pz", &part_pz);
@@ -60,7 +71,7 @@ void EFlowJet::SetUpBranch(TTree *t) {
     t->Branch("aux_truth_match", &aux_truth_match);
 }
 
-void EFlowJet::FillTree(TTree *t) {
+void EFlowJet::FillTree() {
     for (size_t i_jet = 0; i_jet < m_jets.size(); i_jet++) {
         fastjet::PseudoJet &jet = m_jets[i_jet];
         std::vector<fastjet::PseudoJet> jet_particles = jet.constituents();
@@ -70,10 +81,10 @@ void EFlowJet::FillTree(TTree *t) {
         jet_energy = jet.E();
         jet_nparticles = jet_particles.size();
         jet_sdmass = jet.m();
-        jet_tau1 = nSub1(jet);
-        jet_tau2 = nSub2(jet);
-        jet_tau3 = nSub3(jet);
-        jet_tau4 = nSub4(jet);
+        jet_tau1 = (*nSub1)(jet);
+        jet_tau2 = (*nSub2)(jet);
+        jet_tau3 = (*nSub3)(jet);
+        jet_tau4 = (*nSub4)(jet);
 
         // * For now, we don't check the generation level truth information
         // * Just setting this to those values of the jet
@@ -154,13 +165,14 @@ void EFlowJet::FillTree(TTree *t) {
         label_Tbl = 0;
 
         // * We fill the tree for every jet
-        t->Fill();
+        m_tree->Fill();
     }
 }
 
 void EFlowJet::SetEFlowObjs(EFlowObjs::EFlowObjs_t &objs) {
-    fastjet::ClusterSequence clust_seq(objs, m_JetDef);
-    m_jets = fastjet::sorted_by_pt(clust_seq.inclusive_jets(m_pt_min));
+    if (m_clust_seq) delete m_clust_seq;
+    m_clust_seq = new fastjet::ClusterSequence(objs, *m_JetDef);
+    m_jets = fastjet::sorted_by_pt(m_clust_seq->inclusive_jets(m_pt_min));
 }
 
 void EFlowJet::clean_particle_info() {

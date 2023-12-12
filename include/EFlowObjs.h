@@ -1,3 +1,6 @@
+#ifndef EFLOW_OBJS_H
+#define EFLOW_OBJS_H
+
 #include <vector>
 
 #include "ExRootAnalysis/ExRootTreeReader.h"
@@ -46,3 +49,4 @@ private:
     double m_dz;
     double m_dzerr;
 };
+#endif  // EFLOW_OBJS_H
