@@ -79,7 +79,8 @@ void EFlowJet::FillTree() {
         if (fabs(jet.eta()) > m_eta_abs_max) continue;
         jet_pt = jet.pt();
         jet_eta = jet.eta();
-        jet_phi = jet.phi();
+        double jet_phi_tmp = jet.phi();                                    // * [-pi,pi]
+        jet_phi = jet_phi_tmp < 0 ? jet_phi_tmp + 2 * M_PI : jet_phi_tmp;  // * [0,2pi]
         jet_energy = jet.E();
         jet_nparticles = jet_particles.size();
         jet_sdmass = jet.m();
