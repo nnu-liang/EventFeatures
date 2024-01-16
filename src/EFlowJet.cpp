@@ -4,6 +4,7 @@ EFlowJet::EFlowJet()
     : m_jet_algorithm(fastjet::JetAlgorithm::antikt_algorithm),
       m_dR(0.8),
       m_pt_min(500),
+      m_pt_max(1000),
       m_eta_abs_max(2.0),
       m_beta(1.0),
       m_clust_seq(nullptr) {
@@ -77,9 +78,10 @@ void EFlowJet::FillTree() {
         fastjet::PseudoJet &jet = m_jets[i_jet];
         std::vector<fastjet::PseudoJet> jet_particles = jet.constituents();
         if (fabs(jet.eta()) > m_eta_abs_max) continue;
+        if (jet.pt() > m_pt_max) continue;
         jet_pt = jet.pt();
         jet_eta = jet.eta();
-        double jet_phi_tmp = jet.phi();                                    // * [0,2pi]
+        double jet_phi_tmp = jet.phi();                                       // * [0,2pi]
         jet_phi = jet_phi_tmp > M_PI ? jet_phi_tmp - 2 * M_PI : jet_phi_tmp;  // * [-pi,pi]
         jet_energy = jet.E();
         jet_nparticles = jet_particles.size();

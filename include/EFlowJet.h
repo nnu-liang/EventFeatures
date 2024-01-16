@@ -78,6 +78,7 @@ private:
     fastjet::contrib::MeasureDefinition *m_MeasureDef;
     double m_dR;
     double m_pt_min;
+    double m_pt_max;
     double m_eta_abs_max;
     double m_beta;  // * For Nsubjettiness
     fastjet::contrib::Nsubjettiness *nSub1, *nSub2, *nSub3, *nSub4;
