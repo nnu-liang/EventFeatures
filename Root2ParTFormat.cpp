@@ -5,14 +5,19 @@
 
 using namespace std;
 int main(int argc, char const *argv[]) {
+    if (argc < 3) {
+        cout << "Usage: " << argv[0] << " output_file_name input_file1 [input_file2 ...]" << endl;
+    }
     TChain *chain = new TChain("Delphes");
-    chain->Add(argv[1]);
+    for (int i = 2; i < argc; i++) {
+        chain->Add(argv[i]);
+    }
 
     EFlowObjs efobj(chain);
     cout << "Events: " << efobj.GetEntries() << endl;
 
     EFlowJet efjet;
-    TFile *f1 = new TFile("EFlowJet_test.root", "RECREATE");
+    TFile *f1 = new TFile(argv[1], "RECREATE");
     TTree *t1 = new TTree("tree", "ParT Inputs");
     efjet.SetUpBranch(t1);
     for (int ie = 0; ie < efobj.GetEntries(); ie++) {
