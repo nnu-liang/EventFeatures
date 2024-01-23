@@ -7,6 +7,7 @@ using namespace std;
 int main(int argc, char const *argv[]) {
     if (argc < 3) {
         cout << "Usage: " << argv[0] << " output_file_name input_file1 [input_file2 ...]" << endl;
+        return 1;
     }
     TChain *chain = new TChain("Delphes");
     for (int i = 2; i < argc; i++) {
