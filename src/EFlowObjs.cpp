@@ -21,6 +21,7 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs(int entry) {
     Tower *l_tower;
     Track *l_track;
     GenParticle *l_part;
+    TLorentzVector l_p_tmp;
     fastjet::PseudoJet l_pseudojet;
 
 // * From EFlowPhoton
@@ -33,15 +34,11 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs(int entry) {
         cout << " The " << i_photon << "-th E-Flow Photon contains " << l_tower->Particles.GetEntriesFast()
              << " particles" << endl;
 #endif
-        for (int i_photon_part = 0; i_photon_part < l_tower->Particles.GetEntriesFast(); i_photon_part++) {
-            l_part = (GenParticle *)l_tower->Particles.At(i_photon_part);
-            // cout << "The particle four momentum: " << l_part->Px << ", " << l_part->Py << ", " << l_part->Pz << ", "
-            //  << l_part->E << endl;
-            l_pseudojet = fastjet::PseudoJet(l_part->Px, l_part->Py, l_part->Pz, l_part->E);
-            l_pseudojet.set_user_info(new ParticleExtraInfo(l_part->PID, l_part->Charge));
-            l_pseudojet.set_user_index(l_part->PID);
-            m_objs.push_back(l_pseudojet);
-        }
+        l_p_tmp = l_tower->P4();
+        l_pseudojet = fastjet::PseudoJet(l_p_tmp.Px(), l_p_tmp.Py(), l_p_tmp.Pz(), l_p_tmp.E());
+        l_pseudojet.set_user_info(new ParticleExtraInfo(22, 0));
+        l_pseudojet.set_user_index(22);
+        m_objs.push_back(l_pseudojet);
     }
 
 // * From EFlowNeutralHadron
@@ -54,13 +51,11 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs(int entry) {
         cout << " The " << i_NH << "-th E-Flow Neutral Hadron contains " << l_tower->Particles.GetEntriesFast()
              << " particles" << endl;
 #endif
-        for (int i_NH_part = 0; i_NH_part < l_tower->Particles.GetEntriesFast(); i_NH_part++) {
-            l_part = (GenParticle *)l_tower->Particles.At(i_NH_part);
-            l_pseudojet = fastjet::PseudoJet(l_part->Px, l_part->Py, l_part->Pz, l_part->E);
-            l_pseudojet.set_user_info(new ParticleExtraInfo(l_part->PID, l_part->Charge));
-            l_pseudojet.set_user_index(l_part->PID);
-            m_objs.push_back(l_pseudojet);
-        }
+        l_p_tmp = l_tower->P4();
+        l_pseudojet = fastjet::PseudoJet(l_p_tmp.Px(), l_p_tmp.Py(), l_p_tmp.Pz(), l_p_tmp.E());
+        l_pseudojet.set_user_info(new ParticleExtraInfo(0, 0));
+        l_pseudojet.set_user_index(0);
+        m_objs.push_back(l_pseudojet);
     }
 
     // * From EFlowTrack
