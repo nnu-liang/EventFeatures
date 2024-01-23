@@ -23,12 +23,16 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs(int entry) {
     GenParticle *l_part;
     fastjet::PseudoJet l_pseudojet;
 
-    // * From EFlowPhoton
-    // cout << " This event contains " << m_branchEFlowPhoton->GetEntriesFast() << " E-Flow Photon" << endl;
+// * From EFlowPhoton
+#ifdef DEBUG
+    cout << " This event contains " << m_branchEFlowPhoton->GetEntriesFast() << " E-Flow Photon" << endl;
+#endif
     for (int i_photon = 0; i_photon < m_branchEFlowPhoton->GetEntriesFast(); i_photon++) {
         l_tower = (Tower *)m_branchEFlowPhoton->At(i_photon);
-        // cout << " The " << i_photon << "-th E-Flow Photon contains " << l_tower->Particles.GetEntriesFast()
-        //  << " particles" << endl;
+#ifdef DEBUG
+        cout << " The " << i_photon << "-th E-Flow Photon contains " << l_tower->Particles.GetEntriesFast()
+             << " particles" << endl;
+#endif
         for (int i_photon_part = 0; i_photon_part < l_tower->Particles.GetEntriesFast(); i_photon_part++) {
             l_part = (GenParticle *)l_tower->Particles.At(i_photon_part);
             // cout << "The particle four momentum: " << l_part->Px << ", " << l_part->Py << ", " << l_part->Pz << ", "
@@ -40,9 +44,16 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs(int entry) {
         }
     }
 
-    // * From EFlowNeutralHadron
+// * From EFlowNeutralHadron
+#ifdef DEBUG
+    cout << " This event contains " << m_branchEFlowNeutralHadron->GetEntriesFast() << " E-Flow Neutral Hadron" << endl;
+#endif
     for (int i_NH = 0; i_NH < m_branchEFlowNeutralHadron->GetEntriesFast(); i_NH++) {
         l_tower = (Tower *)m_branchEFlowNeutralHadron->At(i_NH);
+#ifdef DEBUG
+        cout << " The " << i_NH << "-th E-Flow Neutral Hadron contains " << l_tower->Particles.GetEntriesFast()
+             << " particles" << endl;
+#endif
         for (int i_NH_part = 0; i_NH_part < l_tower->Particles.GetEntriesFast(); i_NH_part++) {
             l_part = (GenParticle *)l_tower->Particles.At(i_NH_part);
             l_pseudojet = fastjet::PseudoJet(l_part->Px, l_part->Py, l_part->Pz, l_part->E);
