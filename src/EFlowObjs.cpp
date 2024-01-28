@@ -5,17 +5,17 @@
 #include "classes/DelphesClasses.h"
 
 using namespace std;
-EFlowObjs::EFlowObjs(TTree *t) : m_treeReader(new ExRootTreeReader(t)) {
+EFlowObjs::EFlowObjs(ExRootTreeReader *m_treeReader) {
     m_branchParticle = m_treeReader->UseBranch("Particle");
     m_branchEFlowPhoton = m_treeReader->UseBranch("EFlowPhoton");
     m_branchEFlowNeutralHadron = m_treeReader->UseBranch("EFlowNeutralHadron");
     m_branchEFlowTrack = m_treeReader->UseBranch("EFlowTrack");
 }
-EFlowObjs::~EFlowObjs() { delete m_treeReader; }
+EFlowObjs::~EFlowObjs() {}
 
-EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs(int entry) {
+EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs() {
     m_objs.clear();
-    m_treeReader->ReadEntry(entry);
+    // m_treeReader->ReadEntry(entry);
     // cout << " Reading Event-" << entry << endl;
 
     Tower *l_tower;

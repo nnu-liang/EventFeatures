@@ -28,53 +28,55 @@ EFlowJet::~EFlowJet() {
     if (m_clust_seq) delete m_clust_seq;
 }
 
-void EFlowJet::SetUpBranch(TTree *t) {
-    m_tree = t;
-    t->Branch("part_px", &part_px);
-    t->Branch("part_py", &part_py);
-    t->Branch("part_pz", &part_pz);
-    t->Branch("part_energy", &part_energy);
-    t->Branch("part_deta", &part_deta);
-    t->Branch("part_dphi", &part_dphi);
-    t->Branch("part_d0val", &part_d0val);
-    t->Branch("part_d0err", &part_d0err);
-    t->Branch("part_dzval", &part_dzval);
-    t->Branch("part_dzerr", &part_dzerr);
-    t->Branch("part_charge", &part_charge);
-    t->Branch("part_isChargedHadron", &part_isChargedHadron);
-    t->Branch("part_isNeutralHadron", &part_isNeutralHadron);
-    t->Branch("part_isPhoton", &part_isPhoton);
-    t->Branch("part_isElectron", &part_isElectron);
-    t->Branch("part_isMuon", &part_isMuon);
-    t->Branch("label_QCD", &label_QCD);
-    t->Branch("label_Hbb", &label_Hbb);
-    t->Branch("label_Hcc", &label_Hcc);
-    t->Branch("label_Hgg", &label_Hgg);
-    t->Branch("label_H4q", &label_H4q);
-    t->Branch("label_Hqql", &label_Hqql);
-    t->Branch("label_Zqq", &label_Zqq);
-    t->Branch("label_Wqq", &label_Wqq);
-    t->Branch("label_Tbqq", &label_Tbqq);
-    t->Branch("label_Tbl", &label_Tbl);
-    t->Branch("jet_pt", &jet_pt);
-    t->Branch("jet_eta", &jet_eta);
-    t->Branch("jet_phi", &jet_phi);
-    t->Branch("jet_energy", &jet_energy);
-    t->Branch("jet_nparticles", &jet_nparticles);
-    t->Branch("jet_sdmass", &jet_sdmass);
-    t->Branch("jet_tau1", &jet_tau1);
-    t->Branch("jet_tau2", &jet_tau2);
-    t->Branch("jet_tau3", &jet_tau3);
-    t->Branch("jet_tau4", &jet_tau4);
-    t->Branch("aux_genpart_eta", &aux_genpart_eta);
-    t->Branch("aux_genpart_phi", &aux_genpart_phi);
-    t->Branch("aux_genpart_pid", &aux_genpart_pid);
-    t->Branch("aux_genpart_pt", &aux_genpart_pt);
-    t->Branch("aux_truth_match", &aux_truth_match);
-}
+void EFlowJet::SetUpBranch(TTree *t) { SetUpBranches(t); }
+// void EFlowJet::SetUpBranch(TTree *t) {
+//     m_tree = t;
+//     t->Branch("part_px", &part_px);
+//     t->Branch("part_py", &part_py);
+//     t->Branch("part_pz", &part_pz);
+//     t->Branch("part_energy", &part_energy);
+//     t->Branch("part_deta", &part_deta);
+//     t->Branch("part_dphi", &part_dphi);
+//     t->Branch("part_d0val", &part_d0val);
+//     t->Branch("part_d0err", &part_d0err);
+//     t->Branch("part_dzval", &part_dzval);
+//     t->Branch("part_dzerr", &part_dzerr);
+//     t->Branch("part_charge", &part_charge);
+//     t->Branch("part_isChargedHadron", &part_isChargedHadron);
+//     t->Branch("part_isNeutralHadron", &part_isNeutralHadron);
+//     t->Branch("part_isPhoton", &part_isPhoton);
+//     t->Branch("part_isElectron", &part_isElectron);
+//     t->Branch("part_isMuon", &part_isMuon);
+//     t->Branch("label_QCD", &label_QCD);
+//     t->Branch("label_Hbb", &label_Hbb);
+//     t->Branch("label_Hcc", &label_Hcc);
+//     t->Branch("label_Hgg", &label_Hgg);
+//     t->Branch("label_H4q", &label_H4q);
+//     t->Branch("label_Hqql", &label_Hqql);
+//     t->Branch("label_Zqq", &label_Zqq);
+//     t->Branch("label_Wqq", &label_Wqq);
+//     t->Branch("label_Tbqq", &label_Tbqq);
+//     t->Branch("label_Tbl", &label_Tbl);
+//     t->Branch("jet_pt", &jet_pt);
+//     t->Branch("jet_eta", &jet_eta);
+//     t->Branch("jet_phi", &jet_phi);
+//     t->Branch("jet_energy", &jet_energy);
+//     t->Branch("jet_nparticles", &jet_nparticles);
+//     t->Branch("jet_sdmass", &jet_sdmass);
+//     t->Branch("jet_tau1", &jet_tau1);
+//     t->Branch("jet_tau2", &jet_tau2);
+//     t->Branch("jet_tau3", &jet_tau3);
+//     t->Branch("jet_tau4", &jet_tau4);
+//     t->Branch("aux_genpart_eta", &aux_genpart_eta);
+//     t->Branch("aux_genpart_phi", &aux_genpart_phi);
+//     t->Branch("aux_genpart_pid", &aux_genpart_pid);
+//     t->Branch("aux_genpart_pt", &aux_genpart_pt);
+//     t->Branch("aux_truth_match", &aux_truth_match);
+// }
 
 void EFlowJet::FillTree() {
     for (size_t i_jet = 0; i_jet < m_jets.size(); i_jet++) {
+        CleanFeatures();
         fastjet::PseudoJet &jet = m_jets[i_jet];
         std::vector<fastjet::PseudoJet> jet_particles = jet.constituents();
         if (fabs(jet.eta()) > m_eta_abs_max) continue;
@@ -99,7 +101,7 @@ void EFlowJet::FillTree() {
         aux_genpart_pt = jet_pt;
         aux_truth_match = true;
 
-        clean_particle_info();
+        // clean_particle_info();
         for (size_t i_part = 0; i_part < jet_particles.size(); i_part++) {
             auto &part = jet_particles[i_part];
             part_px.push_back(part.px());
@@ -170,7 +172,7 @@ void EFlowJet::FillTree() {
         label_Tbl = 0;
 
         // * We fill the tree for every jet
-        m_tree->Fill();
+        FillBranches();
     }
 }
 
@@ -180,21 +182,21 @@ void EFlowJet::SetEFlowObjs(EFlowObjs::EFlowObjs_t &objs) {
     m_jets = fastjet::sorted_by_pt(m_clust_seq->inclusive_jets(m_pt_min));
 }
 
-void EFlowJet::clean_particle_info() {
-    part_px.clear();
-    part_py.clear();
-    part_pz.clear();
-    part_energy.clear();
-    part_deta.clear();
-    part_dphi.clear();
-    part_d0val.clear();
-    part_d0err.clear();
-    part_dzval.clear();
-    part_dzerr.clear();
-    part_charge.clear();
-    part_isChargedHadron.clear();
-    part_isNeutralHadron.clear();
-    part_isPhoton.clear();
-    part_isElectron.clear();
-    part_isMuon.clear();
-}
+// void EFlowJet::clean_particle_info() {
+//     part_px.clear();
+//     part_py.clear();
+//     part_pz.clear();
+//     part_energy.clear();
+//     part_deta.clear();
+//     part_dphi.clear();
+//     part_d0val.clear();
+//     part_d0err.clear();
+//     part_dzval.clear();
+//     part_dzerr.clear();
+//     part_charge.clear();
+//     part_isChargedHadron.clear();
+//     part_isNeutralHadron.clear();
+//     part_isPhoton.clear();
+//     part_isElectron.clear();
+//     part_isMuon.clear();
+// }

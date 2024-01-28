@@ -11,14 +11,14 @@
 class EFlowObjs {
 public:
     typedef std::vector<fastjet::PseudoJet> EFlowObjs_t;
-    EFlowObjs(TTree *);
+    EFlowObjs(ExRootTreeReader *);
     ~EFlowObjs();
 
-    Long64_t GetEntries() const { return m_treeReader->GetEntries(); }
-    EFlowObjs_t &GetEFlowObjs(int entry);
+    // Long64_t GetEntries() const { return m_treeReader->GetEntries(); }
+    EFlowObjs_t &GetEFlowObjs();
 
 private:
-    ExRootTreeReader *m_treeReader;
+    // ExRootTreeReader *m_treeReader;
 
     TClonesArray *m_branchEFlowPhoton;         // Tower
     TClonesArray *m_branchEFlowNeutralHadron;  // Tower

@@ -1,0 +1,110 @@
+#ifndef PART_FORMAT_H
+#define PART_FORMAT_H
+
+#include <string>
+#include <vector>
+
+class TTree;
+class TBranch;
+class ParTFeatures {
+public:
+    typedef std::vector<float> vf_t;
+    typedef std::vector<int32_t> vi_t;
+
+    ParTFeatures(){};
+    ~ParTFeatures(){};
+
+    vf_t part_px;
+    vf_t part_py;
+    vf_t part_pz;
+    vf_t part_energy;
+    vf_t part_deta;
+    vf_t part_dphi;
+    vf_t part_d0val;
+    vf_t part_d0err;
+    vf_t part_dzval;
+    vf_t part_dzerr;
+    vf_t part_charge;
+    vi_t part_isChargedHadron;
+    vi_t part_isNeutralHadron;
+    vi_t part_isPhoton;
+    vi_t part_isElectron;
+    vi_t part_isMuon;
+    float label_QCD;
+    bool label_Hbb;
+    bool label_Hcc;
+    bool label_Hgg;
+    bool label_H4q;
+    bool label_Hqql;
+    int32_t label_Zqq;
+    int32_t label_Wqq;
+    int32_t label_Tbqq;
+    int32_t label_Tbl;
+
+    float jet_pt;
+    float jet_eta;
+    float jet_phi;
+    float jet_energy;
+    float jet_nparticles;
+    float jet_sdmass;
+    float jet_tau1;
+    float jet_tau2;
+    float jet_tau3;
+    float jet_tau4;
+    float aux_genpart_eta;
+    float aux_genpart_phi;
+    float aux_genpart_pid;
+    float aux_genpart_pt;
+    float aux_truth_match;
+
+    void SetUpBranches(TTree *t, std::string prefix = "");
+    void FillBranches();
+
+    void CleanFeatures();
+
+private:
+    TTree *m_tree;
+    TBranch *m_b_part_px;
+    TBranch *m_b_part_py;
+    TBranch *m_b_part_pz;
+    TBranch *m_b_part_energy;
+    TBranch *m_b_part_deta;
+    TBranch *m_b_part_dphi;
+    TBranch *m_b_part_d0val;
+    TBranch *m_b_part_d0err;
+    TBranch *m_b_part_dzval;
+    TBranch *m_b_part_dzerr;
+    TBranch *m_b_part_charge;
+    TBranch *m_b_part_isChargedHadron;
+    TBranch *m_b_part_isNeutralHadron;
+    TBranch *m_b_part_isPhoton;
+    TBranch *m_b_part_isElectron;
+    TBranch *m_b_part_isMuon;
+    TBranch *m_b_label_QCD;
+    TBranch *m_b_label_Hbb;
+    TBranch *m_b_label_Hcc;
+    TBranch *m_b_label_Hgg;
+    TBranch *m_b_label_H4q;
+    TBranch *m_b_label_Hqql;
+    TBranch *m_b_label_Zqq;
+    TBranch *m_b_label_Wqq;
+    TBranch *m_b_label_Tbqq;
+    TBranch *m_b_label_Tbl;
+    TBranch *m_b_jet_pt;
+    TBranch *m_b_jet_eta;
+    TBranch *m_b_jet_phi;
+    TBranch *m_b_jet_energy;
+    TBranch *m_b_jet_nparticles;
+    TBranch *m_b_jet_sdmass;
+    TBranch *m_b_jet_tau1;
+    TBranch *m_b_jet_tau2;
+    TBranch *m_b_jet_tau3;
+    TBranch *m_b_jet_tau4;
+    TBranch *m_b_aux_genpart_eta;
+    TBranch *m_b_aux_genpart_phi;
+    TBranch *m_b_aux_genpart_pid;
+    TBranch *m_b_aux_genpart_pt;
+    TBranch *m_b_aux_truth_match;
+};
+
+#endif  // PART_FORMA_H
