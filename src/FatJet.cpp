@@ -2,7 +2,8 @@
 
 #include "classes/DelphesClasses.h"
 
-FatJet::FatJet(ExRootTreeReader *reader) : m_pt_min(500), m_pt_max(1000), m_eta_abs_max(2.0) {
+FatJet::FatJet(int pid, ExRootTreeReader *reader)
+    : m_pid(pid), m_pt_min(500), m_pt_max(1000), m_eta_abs_max(2.0), m_dR_jet_parton(0.8) {
     m_branchFatJet = reader->UseBranch("FatJet");
     m_branchParticle = reader->UseBranch("Particle");
     m_branchTrack = reader->UseBranch("Track");
@@ -15,16 +16,41 @@ void FatJet::FillTree() {
     Jet *jet;
     TObject *obj;
     GenParticle *part;
+    GenParticle *part_D;
     Track *track;
     Tower *tower;
     TLorentzVector pj;
     TLorentzVector pv;
+    std::vector<TLorentzVector> pds;
+    // * First find out the ``first copy'' of the decay products of particle with pid: m_pid
+    for (size_t ipart = 0; ipart < m_branchParticle->GetEntriesFast(); ipart++) {
+        part = (GenParticle *)m_branchParticle->At(ipart);
+        if (part->PID != m_pid) continue;
+        if (part->D1 == part->D2) continue;
+        int id_d1 = part->D1;
+        int id_d2 = part->D2;
+        for (size_t idd = id_d1; idd <= id_d2; idd++) {
+            part_D = (GenParticle *)m_branchParticle->At(idd);
+            if (abs(part_D->PID) == 12) continue;
+            if (abs(part_D->PID) == 14) continue;
+            if (abs(part_D->PID) == 16) continue;
+            pds.push_back(part_D->P4());
+        }
+        if (pds.size() != 0) break;
+    }
+
     for (size_t ijet = 0; ijet < m_branchFatJet->GetEntriesFast(); ijet++) {
         CleanFeatures();
         jet = (Jet *)m_branchFatJet->At(ijet);
         if (fabs(jet->Eta) > m_eta_abs_max) continue;
         if (jet->PT > m_pt_max || jet->PT < m_pt_min) continue;
         pj = jet->P4();
+        bool good_parton = true;
+        for (size_t iparton = 0; iparton < pds.size(); iparton++) {
+            good_parton = pj.DeltaR(pds[iparton]) < m_dR_jet_parton;
+            if (!good_parton) break;
+        }
+        if (!good_parton) continue;
         jet_pt = jet->PT;
         jet_eta = jet->Eta;
         jet_phi = jet->Phi;

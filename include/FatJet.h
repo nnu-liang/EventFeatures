@@ -8,7 +8,7 @@
 
 class FatJet : private ParTFeatures {
 public:
-    FatJet(ExRootTreeReader *);
+    FatJet(int pid, ExRootTreeReader *);
     ~FatJet(){};
 
     void SetUpBranch(TTree *t);
@@ -20,9 +20,11 @@ private:
     TClonesArray *m_branchTrack;
     TClonesArray *m_branchTower;
 
+    int m_pid;
     double m_pt_min;
     double m_pt_max;
     double m_eta_abs_max;
+    double m_dR_jet_parton;
 };
 
 #endif  // FAT_JET_H
