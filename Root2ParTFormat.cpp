@@ -18,20 +18,18 @@ int main(int argc, char const *argv[]) {
     ExRootTreeReader *m = new ExRootTreeReader(chain);
     cout << "Events: " << m->GetEntries() << endl;
 
-    EFlowObjs efobj(m);
-    EFlowJet efjet;
+    EFlowJet efjet(25, m);
     TFile *f1 = new TFile(argv[1], "RECREATE");
     TTree *t1 = new TTree("tree", "ParT Inputs");
     efjet.SetUpBranch(t1);
 
-    FatJet fj(m);
+    FatJet fj(25, m);
     TFile *f2 = new TFile(argv[2], "RECREATE");
     TTree *t2 = new TTree("tree", "ParT Inputs");
     fj.SetUpBranch(t2);
     for (int ie = 0; ie < m->GetEntries(); ie++) {
         m->ReadEntry(ie);
         if ((ie + 1) % 1000 == 0) cout << ie + 1 << "-th Event:" << endl;
-        efjet.SetEFlowObjs(efobj.GetEFlowObjs());
         efjet.FillTree();
         fj.FillTree();
     }

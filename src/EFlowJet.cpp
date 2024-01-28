@@ -1,11 +1,14 @@
 #include "EFlowJet.h"
 
-EFlowJet::EFlowJet()
-    : m_jet_algorithm(fastjet::JetAlgorithm::antikt_algorithm),
+EFlowJet::EFlowJet(int pid, ExRootTreeReader *reader)
+    : EFlowObjs(reader),
+      m_pid(pid),
+      m_jet_algorithm(fastjet::JetAlgorithm::antikt_algorithm),
       m_dR(0.8),
       m_pt_min(500),
       m_pt_max(1000),
       m_eta_abs_max(2.0),
+      m_dR_jet_parton(0.8),
       m_beta(1.0),
       m_clust_seq(nullptr) {
     m_JetDef = new fastjet::JetDefinition(m_jet_algorithm, m_dR);
@@ -29,52 +32,11 @@ EFlowJet::~EFlowJet() {
 }
 
 void EFlowJet::SetUpBranch(TTree *t) { SetUpBranches(t); }
-// void EFlowJet::SetUpBranch(TTree *t) {
-//     m_tree = t;
-//     t->Branch("part_px", &part_px);
-//     t->Branch("part_py", &part_py);
-//     t->Branch("part_pz", &part_pz);
-//     t->Branch("part_energy", &part_energy);
-//     t->Branch("part_deta", &part_deta);
-//     t->Branch("part_dphi", &part_dphi);
-//     t->Branch("part_d0val", &part_d0val);
-//     t->Branch("part_d0err", &part_d0err);
-//     t->Branch("part_dzval", &part_dzval);
-//     t->Branch("part_dzerr", &part_dzerr);
-//     t->Branch("part_charge", &part_charge);
-//     t->Branch("part_isChargedHadron", &part_isChargedHadron);
-//     t->Branch("part_isNeutralHadron", &part_isNeutralHadron);
-//     t->Branch("part_isPhoton", &part_isPhoton);
-//     t->Branch("part_isElectron", &part_isElectron);
-//     t->Branch("part_isMuon", &part_isMuon);
-//     t->Branch("label_QCD", &label_QCD);
-//     t->Branch("label_Hbb", &label_Hbb);
-//     t->Branch("label_Hcc", &label_Hcc);
-//     t->Branch("label_Hgg", &label_Hgg);
-//     t->Branch("label_H4q", &label_H4q);
-//     t->Branch("label_Hqql", &label_Hqql);
-//     t->Branch("label_Zqq", &label_Zqq);
-//     t->Branch("label_Wqq", &label_Wqq);
-//     t->Branch("label_Tbqq", &label_Tbqq);
-//     t->Branch("label_Tbl", &label_Tbl);
-//     t->Branch("jet_pt", &jet_pt);
-//     t->Branch("jet_eta", &jet_eta);
-//     t->Branch("jet_phi", &jet_phi);
-//     t->Branch("jet_energy", &jet_energy);
-//     t->Branch("jet_nparticles", &jet_nparticles);
-//     t->Branch("jet_sdmass", &jet_sdmass);
-//     t->Branch("jet_tau1", &jet_tau1);
-//     t->Branch("jet_tau2", &jet_tau2);
-//     t->Branch("jet_tau3", &jet_tau3);
-//     t->Branch("jet_tau4", &jet_tau4);
-//     t->Branch("aux_genpart_eta", &aux_genpart_eta);
-//     t->Branch("aux_genpart_phi", &aux_genpart_phi);
-//     t->Branch("aux_genpart_pid", &aux_genpart_pid);
-//     t->Branch("aux_genpart_pt", &aux_genpart_pt);
-//     t->Branch("aux_truth_match", &aux_truth_match);
-// }
 
 void EFlowJet::FillTree() {
+    SetEFlowObjs();
+    EFlowObjs::TVs_t &m_tmp = FindDecayProducts(m_pid);
+    TLorentzVector pj;
     for (size_t i_jet = 0; i_jet < m_jets.size(); i_jet++) {
         CleanFeatures();
         fastjet::PseudoJet &jet = m_jets[i_jet];
@@ -86,6 +48,13 @@ void EFlowJet::FillTree() {
         double jet_phi_tmp = jet.phi();                                       // * [0,2pi]
         jet_phi = jet_phi_tmp > M_PI ? jet_phi_tmp - 2 * M_PI : jet_phi_tmp;  // * [-pi,pi]
         jet_energy = jet.E();
+        pj.SetPtEtaPhiE(jet_pt, jet_eta, jet_phi, jet_energy);
+        bool good_parton = true;
+        for (size_t iparton = 0; iparton < m_tmp.size(); iparton++) {
+            good_parton = pj.DeltaR(m_tmp[iparton]) < m_dR_jet_parton;
+            if (!good_parton) break;
+        }
+        if (!good_parton) continue;
         jet_nparticles = jet_particles.size();
         jet_sdmass = jet.m();
         jet_tau1 = (*nSub1)(jet);
@@ -176,27 +145,8 @@ void EFlowJet::FillTree() {
     }
 }
 
-void EFlowJet::SetEFlowObjs(EFlowObjs::EFlowObjs_t &objs) {
+void EFlowJet::SetEFlowObjs() {
     if (m_clust_seq) delete m_clust_seq;
-    m_clust_seq = new fastjet::ClusterSequence(objs, *m_JetDef);
+    m_clust_seq = new fastjet::ClusterSequence(GetEFlowObjs(), *m_JetDef);
     m_jets = fastjet::sorted_by_pt(m_clust_seq->inclusive_jets(m_pt_min));
 }
-
-// void EFlowJet::clean_particle_info() {
-//     part_px.clear();
-//     part_py.clear();
-//     part_pz.clear();
-//     part_energy.clear();
-//     part_deta.clear();
-//     part_dphi.clear();
-//     part_d0val.clear();
-//     part_d0err.clear();
-//     part_dzval.clear();
-//     part_dzerr.clear();
-//     part_charge.clear();
-//     part_isChargedHadron.clear();
-//     part_isNeutralHadron.clear();
-//     part_isPhoton.clear();
-//     part_isElectron.clear();
-//     part_isMuon.clear();
-// }

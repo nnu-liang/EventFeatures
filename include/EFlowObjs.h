@@ -5,17 +5,20 @@
 
 #include "ExRootAnalysis/ExRootTreeReader.h"
 #include "TClonesArray.h"
+#include "TLorentzVector.h"
 #include "TTree.h"
 #include "fastjet/PseudoJet.hh"
 
 class EFlowObjs {
 public:
     typedef std::vector<fastjet::PseudoJet> EFlowObjs_t;
+    typedef std::vector<TLorentzVector> TVs_t;
     EFlowObjs(ExRootTreeReader *);
     ~EFlowObjs();
 
     // Long64_t GetEntries() const { return m_treeReader->GetEntries(); }
     EFlowObjs_t &GetEFlowObjs();
+    TVs_t &FindDecayProducts(int);
 
 private:
     // ExRootTreeReader *m_treeReader;
@@ -26,6 +29,7 @@ private:
     TClonesArray *m_branchParticle;            // Need to be loaded to get the refs to particles
 
     EFlowObjs_t m_objs;
+    TVs_t m_TVs;
 };
 
 class ParticleExtraInfo : public fastjet::PseudoJet::UserInfoBase {
