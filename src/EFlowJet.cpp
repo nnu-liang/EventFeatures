@@ -10,10 +10,14 @@ EFlowJet::EFlowJet(int pid, ExRootTreeReader *reader)
       m_eta_abs_max(2.0),
       m_dR_jet_parton(0.8),
       m_beta(1.0),
+      m_beta_softdrop(0.0),
+      m_symmetry_cut_softdrop(0.1),
+      m_R0_softdrop(0.8),
       m_clust_seq(nullptr) {
     m_JetDef = new fastjet::JetDefinition(m_jet_algorithm, m_dR);
     m_AxesDef = new fastjet::contrib::KT_Axes();
     m_MeasureDef = new fastjet::contrib::NormalizedMeasure(m_beta, m_dR);
+    m_SoftDrop = new fastjet::contrib::SoftDrop(m_beta_softdrop, m_symmetry_cut_softdrop, m_R0_softdrop);
     nSub1 = new fastjet::contrib::Nsubjettiness(1, *m_AxesDef, *m_MeasureDef);
     nSub2 = new fastjet::contrib::Nsubjettiness(2, *m_AxesDef, *m_MeasureDef);
     nSub3 = new fastjet::contrib::Nsubjettiness(3, *m_AxesDef, *m_MeasureDef);
@@ -40,9 +44,9 @@ void EFlowJet::FillTree() {
     for (size_t i_jet = 0; i_jet < m_jets.size(); i_jet++) {
         CleanFeatures();
         fastjet::PseudoJet &jet = m_jets[i_jet];
-        std::vector<fastjet::PseudoJet> jet_particles = jet.constituents();
         if (fabs(jet.eta()) > m_eta_abs_max) continue;
         if (jet.pt() > m_pt_max) continue;
+        std::vector<fastjet::PseudoJet> jet_particles = jet.constituents();
         jet_pt = jet.pt();
         jet_eta = jet.eta();
         double jet_phi_tmp = jet.phi();                                       // * [0,2pi]
@@ -56,7 +60,8 @@ void EFlowJet::FillTree() {
         }
         if (!good_parton) continue;
         jet_nparticles = jet_particles.size();
-        jet_sdmass = jet.m();
+        fastjet::PseudoJet softdrop_jet = (*m_SoftDrop)(jet);
+        jet_sdmass = softdrop_jet.m();  // jet.m();
         jet_tau1 = (*nSub1)(jet);
         jet_tau2 = (*nSub2)(jet);
         jet_tau3 = (*nSub3)(jet);

@@ -55,7 +55,7 @@ void FatJet::FillTree() {
         jet_eta = jet->Eta;
         jet_phi = jet->Phi;
         jet_energy = pj.E();
-        jet_sdmass = jet->Mass;
+        jet_sdmass = (jet->SoftDroppedJet).M();  // jet->Mass;
         jet_tau1 = jet->Tau[0];
         jet_tau2 = jet->Tau[1];
         jet_tau3 = jet->Tau[2];
