@@ -6,6 +6,22 @@
 
 class TTree;
 class TBranch;
+
+enum ParTLABEL {
+    l_QCD_g = 0,
+    l_QCD_b = 1,
+    l_QCD_j = 2,
+    l_Hbb = 3,
+    l_Hcc = 4,
+    l_Hgg = 5,
+    l_H4q = 6,
+    l_Hqql = 7,
+    l_Zqq = 8,
+    l_Wqq = 9,
+    l_Tbqq = 10,
+    l_Tbl = 11
+};
+
 class ParTFeatures {
 public:
     typedef std::vector<float> vf_t;
@@ -61,6 +77,9 @@ public:
     void FillBranches();
 
     void CleanFeatures();
+
+    int GetMotherParticlePID(const ParTLABEL lab) const;
+    void SetParTLabel(const ParTLABEL lab);
 
 private:
     TTree *m_tree;

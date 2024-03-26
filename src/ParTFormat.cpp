@@ -139,3 +139,76 @@ void ParTFeatures::CleanFeatures() {
     aux_genpart_pt = 0;
     aux_truth_match = 0;
 }
+
+int ParTFeatures::GetMotherParticlePID(const ParTLABEL lab) const {
+    switch (lab) {
+        case l_QCD_g:
+        case l_QCD_j:
+            return 0;
+        case l_QCD_b:
+            return 5;
+        case l_Hbb:
+        case l_Hcc:
+        case l_Hgg:
+        case l_H4q:
+        case l_Hqql:
+            return 25;
+        case l_Zqq:
+            return 23;
+        case l_Wqq:
+            return 24;
+        case l_Tbqq:
+        case l_Tbl:
+            return 6;
+        default:
+            return 0;
+    }
+}
+void ParTFeatures::SetParTLabel(const ParTLABEL label) {
+    label_QCD = 0;
+    label_Hbb = 0;
+    label_Hcc = 0;
+    label_Hgg = 0;
+    label_H4q = 0;
+    label_Hqql = 0;
+    label_Zqq = 0;
+    label_Wqq = 0;
+    label_Tbqq = 0;
+    label_Tbl = 0;
+    switch (label) {
+        case l_QCD_g:
+        case l_QCD_b:
+        case l_QCD_j:
+            label_QCD = 1;
+            return;
+        case l_Hbb:
+            label_Hbb = 1;
+            return;
+        case l_Hcc:
+            label_Hcc = 1;
+            return;
+        case l_Hgg:
+            label_Hgg = 1;
+            return;
+        case l_H4q:
+            label_H4q = 1;
+            return;
+        case l_Hqql:
+            label_Hqql = 1;
+            return;
+        case l_Zqq:
+            label_Zqq = 1;
+            return;
+        case l_Wqq:
+            label_Wqq = 1;
+            return;
+        case l_Tbqq:
+            label_Tbqq = 1;
+            return;
+        case l_Tbl:
+            label_Tbl = 1;
+            return;
+        default:
+            return;
+    }
+}

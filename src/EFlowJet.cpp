@@ -1,8 +1,8 @@
 #include "EFlowJet.h"
 
-EFlowJet::EFlowJet(int pid, ExRootTreeReader *reader)
+EFlowJet::EFlowJet(ParTLABEL label, ExRootTreeReader *reader)
     : EFlowObjs(reader),
-      m_pid(pid),
+      m_label(label),
       m_jet_algorithm(fastjet::JetAlgorithm::antikt_algorithm),
       m_dR(0.8),
       m_pt_min(500),
@@ -14,6 +14,7 @@ EFlowJet::EFlowJet(int pid, ExRootTreeReader *reader)
       m_symmetry_cut_softdrop(0.1),
       m_R0_softdrop(0.8),
       m_clust_seq(nullptr) {
+    m_pid = GetMotherParticlePID(m_label);
     m_JetDef = new fastjet::JetDefinition(m_jet_algorithm, m_dR);
     m_AxesDef = new fastjet::contrib::KT_Axes();
     m_MeasureDef = new fastjet::contrib::NormalizedMeasure(m_beta, m_dR);
@@ -131,19 +132,17 @@ void EFlowJet::FillTree() {
             part_isMuon.push_back(isMuon);
         }
 
-        // * We are not preparing training data
-        // * So all label is 0
-        // * Otherwise, we should set the label accordingly
-        label_QCD = 0;
-        label_Hbb = 0;
-        label_Hcc = 0;
-        label_Hgg = 0;
-        label_H4q = 0;
-        label_Hqql = 0;
-        label_Zqq = 0;
-        label_Wqq = 0;
-        label_Tbqq = 0;
-        label_Tbl = 0;
+        // label_QCD = 0;
+        // label_Hbb = 0;
+        // label_Hcc = 0;
+        // label_Hgg = 0;
+        // label_H4q = 0;
+        // label_Hqql = 0;
+        // label_Zqq = 0;
+        // label_Wqq = 0;
+        // label_Tbqq = 0;
+        // label_Tbl = 0;
+        SetParTLabel(m_label);
 
         // * We fill the tree for every jet
         FillBranches();

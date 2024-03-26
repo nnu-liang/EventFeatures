@@ -2,8 +2,9 @@
 
 #include "classes/DelphesClasses.h"
 
-FatJet::FatJet(int pid, ExRootTreeReader *reader)
-    : m_pid(pid), m_pt_min(500), m_pt_max(1000), m_eta_abs_max(2.0), m_dR_jet_parton(0.8) {
+FatJet::FatJet(ParTLABEL lab, ExRootTreeReader *reader)
+    : m_label(lab), m_pt_min(500), m_pt_max(1000), m_eta_abs_max(2.0), m_dR_jet_parton(0.8) {
+    m_pid = GetMotherParticlePID(m_label);
     m_branchFatJet = reader->UseBranch("FatJet");
     m_branchParticle = reader->UseBranch("Particle");
     m_branchTrack = reader->UseBranch("Track");
@@ -127,16 +128,17 @@ void FatJet::FillTree() {
             part_isMuon.push_back(isMuon);
         }
 
-        label_QCD = 0;
-        label_Hbb = 0;
-        label_Hcc = 0;
-        label_Hgg = 0;
-        label_H4q = 0;
-        label_Hqql = 0;
-        label_Zqq = 0;
-        label_Wqq = 0;
-        label_Tbqq = 0;
-        label_Tbl = 0;
+        // label_QCD = 0;
+        // label_Hbb = 0;
+        // label_Hcc = 0;
+        // label_Hgg = 0;
+        // label_H4q = 0;
+        // label_Hqql = 0;
+        // label_Zqq = 0;
+        // label_Wqq = 0;
+        // label_Tbqq = 0;
+        // label_Tbl = 0;
+        SetParTLabel(m_label);
 
         FillBranches();
     }

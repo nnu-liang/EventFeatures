@@ -15,7 +15,7 @@
 
 class EFlowJet : public EFlowObjs, private ParTFeatures {
 public:
-    EFlowJet(int, ExRootTreeReader *);
+    EFlowJet(ParTLABEL, ExRootTreeReader *);
     ~EFlowJet();
 
     void SetUpBranch(TTree *t);
@@ -29,6 +29,7 @@ private:
     fastjet::contrib::AxesDefinition *m_AxesDef;
     fastjet::contrib::MeasureDefinition *m_MeasureDef;
     fastjet::contrib::SoftDrop *m_SoftDrop;
+    ParTLABEL m_label;
     int m_pid;
     double m_dR;
     double m_pt_min;

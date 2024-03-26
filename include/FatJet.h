@@ -8,7 +8,7 @@
 
 class FatJet : private ParTFeatures {
 public:
-    FatJet(int pid, ExRootTreeReader *);
+    FatJet(ParTLABEL lab, ExRootTreeReader *);
     ~FatJet(){};
 
     void SetUpBranch(TTree *t);
@@ -20,6 +20,7 @@ private:
     TClonesArray *m_branchTrack;
     TClonesArray *m_branchTower;
 
+    ParTLABEL m_label;
     int m_pid;
     double m_pt_min;
     double m_pt_max;

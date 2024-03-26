@@ -26,14 +26,14 @@ int main(int argc, char const *argv[]) {
     ExRootTreeReader *m = new ExRootTreeReader(chain);
     cout << "Events: " << m->GetEntries() << endl;
 
-    int pid = atoi(argv[1]);
+    ParTLABEL label = static_cast<ParTLABEL>(atoi(argv[1]));
 
-    EFlowJet efjet(pid, m);
+    EFlowJet efjet(label, m);
     TFile *f1 = new TFile(argv[2], "RECREATE");
     TTree *t1 = new TTree("tree", "ParT Inputs");
     efjet.SetUpBranch(t1);
 
-    FatJet fj(pid, m);
+    FatJet fj(label, m);
     TFile *f2 = new TFile(argv[3], "RECREATE");
     TTree *t2 = new TTree("tree", "ParT Inputs");
     fj.SetUpBranch(t2);
