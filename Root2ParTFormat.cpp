@@ -8,8 +8,9 @@ using namespace std;
 int main(int argc, char const *argv[]) {
     if (argc < 5) {
         cout << "Usage: " << argv[0]
-             << " pid output_file_name_fastjet output_file_name_fatjet input_file1 [input_file2 ...]" << endl;
-        cout << "  - pid: the PID for the mother particle of the jet" << endl;
+             << " label output_file_name_fastjet output_file_name_fatjet input_file1 [input_file2 ...]" << endl;
+        cout << "  - label: the label for the jet" << endl;
+        cout << "        See ParTFormat.h for available labels" << endl;
         cout << "  - output_file_name_fastjet: the output file containing information obtained from clustering jet "
                 "using fastjet by ourselves."
              << endl;
