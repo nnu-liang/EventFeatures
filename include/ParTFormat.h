@@ -19,7 +19,8 @@ enum ParTLABEL {
     l_Zqq = 8,
     l_Wqq = 9,
     l_Tbqq = 10,
-    l_Tbl = 11
+    l_Tbl = 11，
+    l_Zbb = 12
 };
 
 class ParTFeatures {
@@ -56,6 +57,7 @@ public:
     int32_t label_Wqq;
     int32_t label_Tbqq;
     int32_t label_Tbl;
+    bool label_Zbb;
 
     float jet_pt;
     float jet_eta;
@@ -109,6 +111,7 @@ private:
     TBranch *m_b_label_Wqq;
     TBranch *m_b_label_Tbqq;
     TBranch *m_b_label_Tbl;
+    TBranch *m_b_label_Zbb;
     TBranch *m_b_jet_pt;
     TBranch *m_b_jet_eta;
     TBranch *m_b_jet_phi;
