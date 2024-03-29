@@ -19,7 +19,7 @@ enum ParTLABEL {
     l_Zqq = 8,
     l_Wqq = 9,
     l_Tbqq = 10,
-    l_Tbl = 11，
+    l_Tbl = 11,
     l_Zbb = 12
 };
 
