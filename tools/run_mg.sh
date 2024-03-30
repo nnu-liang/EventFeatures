@@ -67,7 +67,7 @@ $RUN_CARD_PATH
 exit
 EOF
     fi
-    RUN_DIR="$PROCESS_DIR/Events/run_$(printf "%02d" $i)/"
+    RUN_DIR="$PROCESS_DIR/Events/run_01/"
 if [ -d "$RUN_DIR" ]; then
     cd $RUN_DIR
     if [ -f "tag_1_delphes_events.root" ]; then
@@ -75,10 +75,10 @@ if [ -d "$RUN_DIR" ]; then
         let ROOT_FILE_NUM+=1
     fi
     cd -  
+    rm -f "${PROCESS_DIR}/HTML/results.pkl"
+    find "${PROCESS_DIR}/HTML/" -type d -name "*run*" -exec rm -rf {} +
+    find "${PROCESS_DIR}/Events/" -mindepth 1 -type d -exec rm -rf {} +
 fi
 done
-rm -rf "${PROCESS_DIR}/Events"
-rm -f "${PROCESS_DIR}/HTML/results.pkl"
-find "${PROCESS_DIR}/HTML/" -type d -name "*run*" -exec rm -rf {} +
 echo "完成：数据已在 $PROCESS_DIR 中生成，tag_1_delphes_events.root 文件已移至 $ROOT_FILE_DIR"
 
