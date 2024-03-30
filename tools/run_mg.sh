@@ -80,5 +80,6 @@ if [ -d "$RUN_DIR" ]; then
     find "${PROCESS_DIR}/Events/" -mindepth 1 -type d -exec rm -rf {} +
 fi
 done
+rm -rf "${PROCESS_DIR}"
 echo "完成：数据已在 $PROCESS_DIR 中生成，tag_1_delphes_events.root 文件已移至 $ROOT_FILE_DIR"
 
