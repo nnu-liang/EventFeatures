@@ -98,6 +98,7 @@ EOF
         RUN_DIR="${PROCESS_DIR}/Events/run_01_decayed_1/"
     else
         RUN_DIR="${PROCESS_DIR}/Events/run_01/"
+    fi
     if [ -d "$RUN_DIR" ]; then
         cd $RUN_DIR
         if [ -f "tag_1_delphes_events.root" ]; then
