@@ -94,7 +94,10 @@ exit
 EOF
         fi
     fi
-    RUN_DIR="$PROCESS_DIR/Events/run_01/"
+    if [ "$MADSPIN" -eq 1 ]; then
+        RUN_DIR="${PROCESS_DIR}/Events/run_01_decayed_1/"
+    else
+        RUN_DIR="${PROCESS_DIR}/Events/run_01/"
     if [ -d "$RUN_DIR" ]; then
         cd $RUN_DIR
         if [ -f "tag_1_delphes_events.root" ]; then
