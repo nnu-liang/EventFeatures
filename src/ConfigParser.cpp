@@ -15,6 +15,11 @@ std::string Convert::string_to_T<std::string>(std::string const &val) {
     return val;
 }
 
+ConfigParser &ConfigParser::Get_Global_Parser() {
+    static ConfigParser gParser;
+    return gParser;
+}
+
 ConfigParser::ConfigParser(const std::string &fName) {
     // this->fName = fName;
     Parse_File(fName);

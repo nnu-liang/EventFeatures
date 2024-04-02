@@ -47,9 +47,12 @@ private:
 
     void Parse_Line(const std::string &line, int const line_Number);
 
-public:
+    ConfigParser(){};
+
     ConfigParser(const std::string &fName);
-    ~ConfigParser(){};
+
+public:
+    static ConfigParser &Get_Global_Parser();
 
     bool Has_Key(const std::string &key) const;
 
