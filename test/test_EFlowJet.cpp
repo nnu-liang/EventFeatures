@@ -5,19 +5,20 @@
 
 using namespace std;
 int main(int argc, char const *argv[]) {
+    ParTLABEL label = static_cast<ParTLABEL>(atoi(argv[1]));
     TChain *chain = new TChain("Delphes");
-    chain->Add(argv[1]);
+    for (size_t i = 2; i < argc; i++) {
+        chain->Add(argv[i]);
+    }
+    ExRootTreeReader *m = new ExRootTreeReader(chain);
 
-    EFlowObjs efobj(chain);
-    cout << "Events: " << efobj.GetEntries() << endl;
-
-    EFlowJet efjet;
+    EFlowJet efjet(label, m);
     TFile *f1 = new TFile("EFlowJet_test.root", "RECREATE");
     TTree *t1 = new TTree("tree", "ParT Inputs");
     efjet.SetUpBranch(t1);
-    for (int ie = 0; ie < efobj.GetEntries(); ie++) {
+    for (int ie = 0; ie < m->GetEntries(); ie++) {
+        m->ReadEntry(ie);
         cout << ie << "-th Event:" << endl;
-        efjet.SetEFlowObjs(efobj.GetEFlowObjs(ie));
         efjet.FillTree();
     }
     t1->Write();
