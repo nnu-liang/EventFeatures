@@ -11,7 +11,9 @@ int main(int argc, char const *argv[]) {
         cout << "Usage: " << argv[0] << " label config_file output_file_name input_file1 [input_file2 ...]" << endl;
         cout << "  - label: the label for the jet" << endl;
         cout << "        See ParTFormat.h for available labels" << endl;
-        cout << "  - config_file: the configuration files containing several tunable parameters" << endl;
+        cout << "  - config_file: the configuration files containing several tunable parameters (See "
+                "inputs/FatJet_config.conf as example)"
+             << endl;
         cout << "  - output_file_name: the output file containing information from the Fat Jet" << endl;
         cout << "  - input_file1 [input_file2 ...]: input root file(s)" << endl;
         return 1;
