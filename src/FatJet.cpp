@@ -1,17 +1,22 @@
 #include "FatJet.h"
 
+#include "ConfigParser.h"
 #include "classes/DelphesClasses.h"
 
 FatJet::FatJet(ParTLABEL lab, ExRootTreeReader *reader)
-    : m_label(lab), m_pt_min(500), m_pt_max(1000), m_eta_abs_max(2.0), m_dR_jet_parton(0.8) {
+    : m_label(lab)  //, m_pt_min(500), m_pt_max(1000), m_eta_abs_max(2.0), m_dR_jet_parton(0.8)
+{
     m_pid = GetMotherParticlePID(m_label);
+    ConfigParser &gParser = ConfigParser::Get_Global_Parser();
+    m_pt_min = gParser.Get_Value<double>("FAT_JET_PT_MIN", 500);
+    m_pt_max = gParser.Get_Value<double>("FAT_JET_PT_MAX", 1000);
+    m_eta_abs_max = gParser.Get_Value<double>("FAT_JET_ETA_MAX", 2.0);
+    m_dR_jet_parton = gParser.Get_Value<double>("FAT_JET_dR_JET_PARTON", 0.8);
     m_branchFatJet = reader->UseBranch("FatJet");
     m_branchParticle = reader->UseBranch("Particle");
     m_branchTrack = reader->UseBranch("Track");
     m_branchTower = reader->UseBranch("Tower");
 }
-
-void FatJet::SetUpBranch(TTree *t) { SetUpBranches(t); }
 
 void FatJet::FillTree() {
     Jet *jet;

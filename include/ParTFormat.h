@@ -75,7 +75,8 @@ public:
     float aux_genpart_pt;
     float aux_truth_match;
 
-    void SetUpBranches(TTree *t, std::string prefix = "");
+    virtual void SetUpBranches(TTree *t);
+    virtual void FillTree() = 0;
     void FillBranches();
 
     void CleanFeatures();

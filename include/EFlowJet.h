@@ -13,13 +13,12 @@
 #include "fastjet/contribs/Nsubjettiness/Nsubjettiness.hh"
 #include "fastjet/contribs/RecursiveTools/SoftDrop.hh"
 
-class EFlowJet : public EFlowObjs, private ParTFeatures {
+class EFlowJet : public EFlowObjs, public ParTFeatures {
 public:
     EFlowJet(ParTLABEL, ExRootTreeReader *);
     ~EFlowJet();
 
-    void SetUpBranch(TTree *t);
-    void FillTree();
+    virtual void FillTree() override;
 
 private:
     fastjet::ClusterSequence *m_clust_seq;

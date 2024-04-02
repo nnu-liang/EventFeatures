@@ -63,6 +63,7 @@ public:
     template <typename ValueType>
     ValueType Get_Value(const std::string &key, ValueType const &defaultValue = ValueType()) const {
         if (!Has_Key(key)) {
+            std::cout << "Didn't Find key: " << key << ", using default value: " << defaultValue << std::endl;
             return defaultValue;
         }
         return Convert::string_to_T<ValueType>(contents.find(key)->second);

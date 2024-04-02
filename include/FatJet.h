@@ -6,13 +6,12 @@
 #include "TClonesArray.h"
 #include "TTree.h"
 
-class FatJet : private ParTFeatures {
+class FatJet : public ParTFeatures {
 public:
     FatJet(ParTLABEL lab, ExRootTreeReader *);
     ~FatJet(){};
 
-    void SetUpBranch(TTree *t);
-    void FillTree();
+    virtual void FillTree() override;
 
 private:
     TClonesArray *m_branchFatJet;

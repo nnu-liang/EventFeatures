@@ -1,20 +1,32 @@
 #include "EFlowJet.h"
 
+#include "ConfigParser.h"
+
 EFlowJet::EFlowJet(ParTLABEL label, ExRootTreeReader *reader)
     : EFlowObjs(reader),
       m_label(label),
       m_jet_algorithm(fastjet::JetAlgorithm::antikt_algorithm),
-      m_dR(0.8),
-      m_pt_min(500),
-      m_pt_max(1000),
-      m_eta_abs_max(2.0),
-      m_dR_jet_parton(0.8),
-      m_beta(1.0),
-      m_beta_softdrop(0.0),
-      m_symmetry_cut_softdrop(0.1),
-      m_R0_softdrop(0.8),
+      //   m_dR(0.8),
+      //   m_pt_min(500),
+      //   m_pt_max(1000),
+      //   m_eta_abs_max(2.0),
+      //   m_dR_jet_parton(0.8),
+      //   m_beta(1.0),
+      //   m_beta_softdrop(0.0),
+      //   m_symmetry_cut_softdrop(0.1),
+      //   m_R0_softdrop(0.8),
       m_clust_seq(nullptr) {
     m_pid = GetMotherParticlePID(m_label);
+    ConfigParser &gParser = ConfigParser::Get_Global_Parser();
+    m_dR = gParser.Get_Value<double>("FAT_JET_ANTIKT_dR", 0.8);
+    m_pt_min = gParser.Get_Value<double>("FAT_JET_PT_MIN", 500);
+    m_pt_max = gParser.Get_Value<double>("FAT_JET_PT_MAX", 1000);
+    m_eta_abs_max = gParser.Get_Value<double>("FAT_JET_ETA_MAX", 2.0);
+    m_dR_jet_parton = gParser.Get_Value<double>("FAT_JET_dR_JET_PARTON", 0.8);
+    m_beta = gParser.Get_Value<double>("FAT_JET_BETA", 1.0);
+    m_beta_softdrop = gParser.Get_Value<double>("FAT_JET_SOFTDROP_BETA", 0.0);
+    m_symmetry_cut_softdrop = gParser.Get_Value<double>("FAT_JET_SOFTDROP_SYMMETRY_CUT", 0.1);
+    m_R0_softdrop = gParser.Get_Value<double>("FAT_JET_SOFTDROP_R0", 0.8);
     m_JetDef = new fastjet::JetDefinition(m_jet_algorithm, m_dR);
     m_AxesDef = new fastjet::contrib::KT_Axes();
     m_MeasureDef = new fastjet::contrib::NormalizedMeasure(m_beta, m_dR);
@@ -35,8 +47,6 @@ EFlowJet::~EFlowJet() {
     delete nSub4;
     if (m_clust_seq) delete m_clust_seq;
 }
-
-void EFlowJet::SetUpBranch(TTree *t) { SetUpBranches(t); }
 
 void EFlowJet::FillTree() {
     SetEFlowObjs();

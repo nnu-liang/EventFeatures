@@ -5,7 +5,7 @@
 #include "TBranch.h"
 #include "TTree.h"
 
-void ParTFeatures::SetUpBranches(TTree *t, std::string prefix) {
+void ParTFeatures::SetUpBranches(TTree *t) {
     m_tree = t;
     m_b_part_px = t->Branch("part_px", &part_px);
     m_b_part_py = t->Branch("part_py", &part_py);
@@ -124,7 +124,7 @@ void ParTFeatures::CleanFeatures() {
     label_Wqq = 0;
     label_Tbqq = 0;
     label_Tbl = 0;
-    label_Zbb =0;
+    label_Zbb = 0;
     jet_pt = 0;
     jet_eta = 0;
     jet_phi = 0;
