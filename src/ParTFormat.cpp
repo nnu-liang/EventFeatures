@@ -33,7 +33,7 @@ void ParTFeatures::SetUpBranches(TTree *t, std::string prefix) {
     m_b_label_Wqq = t->Branch("label_Wqq", &label_Wqq);
     m_b_label_Tbqq = t->Branch("label_Tbqq", &label_Tbqq);
     m_b_label_Tbl = t->Branch("label_Tbl", &label_Tbl);
-    m_b_label_Tbl = t->Branch("label_Zbb", &label_Zbb);
+    m_b_label_Zbb = t->Branch("label_Zbb", &label_Zbb);
     m_b_jet_pt = t->Branch("jet_pt", &jet_pt);
     m_b_jet_eta = t->Branch("jet_eta", &jet_eta);
     m_b_jet_phi = t->Branch("jet_phi", &jet_phi);
@@ -178,6 +178,7 @@ void ParTFeatures::SetParTLabel(const ParTLABEL label) {
     label_Wqq = 0;
     label_Tbqq = 0;
     label_Tbl = 0;
+    label_Zbb = 0;
     switch (label) {
         case l_QCD_g:
         case l_QCD_b:
