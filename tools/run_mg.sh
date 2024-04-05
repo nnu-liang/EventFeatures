@@ -18,7 +18,6 @@ RUN_CARD_PATH="/home/liang/Workingspace/Tagging/inputs/run_card.dat"
 if [ ! -d "$ROOT_FILE_DIR" ]; then
     mkdir -p "$ROOT_FILE_DIR"
 fi
-LOCK_FILE="${ROOT_FILE_DIR}/.lock"
 
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 PROCESS_DIR="${OUTPUT_DIR}/${PROCESS_NAME}_${TIMESTAMP}"
@@ -44,12 +43,6 @@ cp "$DUMMY_FCT_PATH" $PROCESS_DIR/SubProcesses/
 cd $MG_DIR
 
 ROOT_FILE_NUM=1
-if ls ${ROOT_FILE_DIR}/${PROCESS_NAME}_*.root 1> /dev/null 2>&1; then
-    MAX_NUM=$(ls ${ROOT_FILE_DIR}/${PROCESS_NAME}_*.root | awk -F '_' '{print $NF}' | sort -n | tail -1 | sed 's/.root$//')
-    if [[ "$MAX_NUM" =~ ^[0-9]+$ ]]; then
-        ROOT_FILE_NUM=$((MAX_NUM + 1))
-    fi
-fi
 
 for ((i=1; i<=$N; i++))
 do
@@ -97,12 +90,7 @@ exit
 EOF
         fi
     fi
-    while true; do
-    if mkdir "$LOCK_FILE" 2>/dev/null; then
-        break
-    fi
-    sleep 1 
-    done
+
     if [ "$MADSPIN" -eq 1 ]; then
         RUN_DIR="${PROCESS_DIR}/Events/run_01_decayed_1/"
     else
@@ -111,15 +99,14 @@ EOF
     if [ -d "$RUN_DIR" ]; then
         cd $RUN_DIR
         if [ -f "tag_1_delphes_events.root" ]; then
-            mv tag_1_delphes_events.root "${ROOT_FILE_DIR}/${PROCESS_NAME}_$(printf "%02d" $ROOT_FILE_NUM).root"
-            let ROOT_FILE_NUM+=1
+            mv tag_1_delphes_events.root "${ROOT_FILE_DIR}/${PROCESS_NAME}_$(printf "%02d" $ROOT_FILE_NUM)_${TIMESTAMP}.root"
         fi
         cd -  
         rm -f "${PROCESS_DIR}/HTML/results.pkl"
         find "${PROCESS_DIR}/HTML/" -type d -name "*run*" -exec rm -rf {} +
         find "${PROCESS_DIR}/Events/" -mindepth 1 -type d -exec rm -rf {} +
     fi
-    rmdir "$LOCK_FILE"
+    let ROOT_FILE_NUM+=1
 done
 rm -rf "${PROCESS_DIR}"
 echo "完成：数据已在 $PROCESS_DIR 中生成，tag_1_delphes_events.root 文件已移至 $ROOT_FILE_DIR"
