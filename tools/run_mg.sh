@@ -1,5 +1,5 @@
-if [ "$#" -ne 7 ]; then
-    echo "Usage: $0 <process> <output_dir> <process_name> <launch_times> <root_file_dir> <madspin> <madspin_card_path>"
+if [ "$#" -ne 8 ]; then
+    echo "Usage: $0 <process> <output_dir> <process_name> <launch_times> <root_file_dir> <madspin> <madspin_card_path> <dummy_fct_path>"
     exit 1
 fi
 
@@ -11,12 +11,14 @@ N="$4"
 ROOT_FILE_DIR="$5"
 MADSPIN="$6"
 MADSPIN_CARD_PATH="$7"
+DUMMY_FCT_PATH="$8"
 DELPHES_CARD_PATH="/home/liang/Workingspace/Tagging/inputs/delphes_card_CMS.dat"
 RUN_CARD_PATH="/home/liang/Workingspace/Tagging/inputs/run_card.dat"
 
 if [ ! -d "$ROOT_FILE_DIR" ]; then
     mkdir -p "$ROOT_FILE_DIR"
 fi
+LOCK_FILE="${ROOT_FILE_DIR}/.lock"
 
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 PROCESS_DIR="${OUTPUT_DIR}/${PROCESS_NAME}_${TIMESTAMP}"
@@ -38,6 +40,7 @@ output $PROCESS_DIR
 exit
 EOF
 cp /home/liang/Workingspace/Tagging/inputs/trackResolutionCMS.tcl $PROCESS_DIR/Cards/
+cp "$DUMMY_FCT_PATH" $PROCESS_DIR/SubProcesses/
 cd $MG_DIR
 
 ROOT_FILE_NUM=1
@@ -94,6 +97,12 @@ exit
 EOF
         fi
     fi
+    while true; do
+    if mkdir "$LOCK_FILE" 2>/dev/null; then
+        break
+    fi
+    sleep 1 
+    done
     if [ "$MADSPIN" -eq 1 ]; then
         RUN_DIR="${PROCESS_DIR}/Events/run_01_decayed_1/"
     else
@@ -110,6 +119,7 @@ EOF
         find "${PROCESS_DIR}/HTML/" -type d -name "*run*" -exec rm -rf {} +
         find "${PROCESS_DIR}/Events/" -mindepth 1 -type d -exec rm -rf {} +
     fi
+    rmdir "$LOCK_FILE"
 done
 rm -rf "${PROCESS_DIR}"
 echo "完成：数据已在 $PROCESS_DIR 中生成，tag_1_delphes_events.root 文件已移至 $ROOT_FILE_DIR"
