@@ -34,7 +34,7 @@ int main(int argc, char const *argv[]) {
     ParTFeatures *handler;
     if (tag == 0) handler = new EFlowJet(label, m);
     if (tag == 1) handler = new FatJet(label, m);
-    TFile *f1 = new TFile(argv[2], "RECREATE");
+    TFile *f1 = new TFile(argv[3], "RECREATE");
     TTree *t1 = new TTree("tree", "ParT Inputs");
     handler->SetUpBranches(t1);
 
