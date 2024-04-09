@@ -9,10 +9,10 @@
       b = P(:, 3) 
       antib = P(:, 4) 
 
-      pxb = b(2)
-      pyb = b(3)
-      pxantib = antib(2)
-      pyantib = antib(3)
+      pxb = b(1)
+      pyb = b(2)
+      pxantib = antib(1)
+      pyantib = antib(2)
 
       Pt = sqrt( (pxb + pxantib)**2 + (pyb + pyantib)**2 )
   
