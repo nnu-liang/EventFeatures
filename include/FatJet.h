@@ -16,8 +16,11 @@ public:
 private:
     TClonesArray *m_branchFatJet;
     TClonesArray *m_branchParticle;
-    TClonesArray *m_branchTrack;
-    TClonesArray *m_branchTower;
+    // TClonesArray *m_branchTrack;
+    // TClonesArray *m_branchTower;
+    TClonesArray *m_branchEFlowPhoton;
+    TClonesArray *m_branchEFlowNeutralHadron;
+    TClonesArray *m_branchEFlowTrack;
 
     ParTLABEL m_label;
     int m_pid;

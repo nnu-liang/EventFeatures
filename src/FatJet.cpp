@@ -14,8 +14,14 @@ FatJet::FatJet(ParTLABEL lab, ExRootTreeReader *reader)
     m_dR_jet_parton = gParser.Get_Value<double>("FAT_JET_dR_JET_PARTON", 0.8);
     m_branchFatJet = reader->UseBranch("FatJet");
     m_branchParticle = reader->UseBranch("Particle");
-    m_branchTrack = reader->UseBranch("Track");
-    m_branchTower = reader->UseBranch("Tower");
+    // m_branchTrack = reader->UseBranch("Track");
+    // m_branchTower = reader->UseBranch("Tower");
+    // ! Since in the delphes card we used, the FatJet is reconstructed using the EFlow objects
+    // ! The EFlow objects contain following three categories, hence we need to use them;
+    // ! The Track and Tower is not necessary, and only using them will lose many constituents inside the jets;
+    m_branchEFlowPhoton = reader->UseBranch("EFlowPhoton");
+    m_branchEFlowNeutralHadron = reader->UseBranch("EFlowNeutralHadron");
+    m_branchEFlowTrack = reader->UseBranch("EFlowTrack");
 }
 
 void FatJet::FillTree() {
