@@ -76,9 +76,9 @@ public:
     float aux_truth_match;
     int aux_delphes_event_id;
 
-    void SetEventID(int event_id) { aux_delphes_event_id = event_id; }
+    // void SetEventID(int event_id) { aux_delphes_event_id = event_id; }
     virtual void SetUpBranches(TTree *t);
-    virtual void FillTree() = 0;
+    virtual void FillTree(int event_id = -1) = 0;
     void FillBranches();
 
     void CleanFeatures();

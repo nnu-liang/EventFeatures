@@ -41,8 +41,7 @@ int main(int argc, char const *argv[]) {
     for (int ie = 0; ie < m->GetEntries(); ie++) {
         m->ReadEntry(ie);
         if ((ie + 1) % 1000 == 0) cout << ie + 1 << "-th Event:" << endl;
-        handler->SetEventID(ie);
-        handler->FillTree();
+        handler->FillTree(ie);
     }
     f1->cd();
     t1->Write();

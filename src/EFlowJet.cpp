@@ -48,7 +48,7 @@ EFlowJet::~EFlowJet() {
     if (m_clust_seq) delete m_clust_seq;
 }
 
-void EFlowJet::FillTree() {
+void EFlowJet::FillTree(int event_id) {
     SetEFlowObjs();
     EFlowObjs::TVs_t &m_tmp = FindDecayProducts(m_pid);
     TLorentzVector pj;
@@ -85,6 +85,7 @@ void EFlowJet::FillTree() {
         aux_genpart_pid = 0;
         aux_genpart_pt = jet_pt;
         aux_truth_match = true;
+        aux_delphes_event_id = event_id;
 
         // clean_particle_info();
         for (size_t i_part = 0; i_part < jet_particles.size(); i_part++) {

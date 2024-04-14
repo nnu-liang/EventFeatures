@@ -24,7 +24,7 @@ FatJet::FatJet(ParTLABEL lab, ExRootTreeReader *reader)
     m_branchEFlowTrack = reader->UseBranch("EFlowTrack");
 }
 
-void FatJet::FillTree() {
+void FatJet::FillTree(int event_id) {
     Jet *jet;
     TObject *obj;
     GenParticle *part;
@@ -78,6 +78,7 @@ void FatJet::FillTree() {
         aux_genpart_pid = 0;
         aux_genpart_pt = jet_pt;
         aux_truth_match = true;
+        aux_delphes_event_id = event_id;
 
         jet_nparticles = 0;
         for (size_t icons = 0; icons < jet->Constituents.GetEntriesFast(); icons++) {

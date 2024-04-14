@@ -18,7 +18,7 @@ public:
     EFlowJet(ParTLABEL, ExRootTreeReader *);
     ~EFlowJet();
 
-    virtual void FillTree() override;
+    virtual void FillTree(int event_id = -1) override;
 
 private:
     fastjet::ClusterSequence *m_clust_seq;
