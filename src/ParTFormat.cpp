@@ -49,6 +49,7 @@ void ParTFeatures::SetUpBranches(TTree *t) {
     m_b_aux_genpart_pid = t->Branch("aux_genpart_pid", &aux_genpart_pid);
     m_b_aux_genpart_pt = t->Branch("aux_genpart_pt", &aux_genpart_pt);
     m_b_aux_truth_match = t->Branch("aux_truth_match", &aux_truth_match);
+    t->Branch("event_number", &m_nthEvent, "event_number/I");//用于事件编号
 }
 
 void ParTFeatures::FillBranches() {

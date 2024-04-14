@@ -75,6 +75,7 @@ public:
     float aux_genpart_pt;
     float aux_truth_match;
 
+    void SetNthEvent(int nth) { m_nthEvent = nth; }  //用于事件编号
     virtual void SetUpBranches(TTree *t);
     virtual void FillTree() = 0;
     void FillBranches();
@@ -128,6 +129,7 @@ private:
     TBranch *m_b_aux_genpart_pid;
     TBranch *m_b_aux_genpart_pt;
     TBranch *m_b_aux_truth_match;
+    int m_nthEvent;//用于事件编号
 };
 
 #endif  // PART_FORMA_H

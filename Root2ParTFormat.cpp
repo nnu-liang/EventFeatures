@@ -41,6 +41,7 @@ int main(int argc, char const *argv[]) {
     for (int ie = 0; ie < m->GetEntries(); ie++) {
         m->ReadEntry(ie);
         if ((ie + 1) % 1000 == 0) cout << ie + 1 << "-th Event:" << endl;
+        handler->SetNthEvent(ie + 1);//用于事件编号
         handler->FillTree();
     }
     f1->cd();
