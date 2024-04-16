@@ -11,7 +11,7 @@ public:
     FatJet(ParTLABEL lab, ExRootTreeReader *);
     ~FatJet(){};
 
-    virtual void FillTree() override;
+    virtual void FillTree(int event_id = -1) override;
 
 private:
     TClonesArray *m_branchFatJet;
