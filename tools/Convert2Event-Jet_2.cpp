@@ -8,11 +8,9 @@
 #include "TBranch.h"
 
 int main() {
-    // 打开原始的ROOT文件和Tree
     TFile *inputFile = new TFile("hzbbvv_output.root", "READ");
-    TTree *inputTree = static_cast<TTree*>(inputFile->Get("tree"));  // 替换为真实的Tree名称
+    TTree *inputTree = static_cast<TTree*>(inputFile->Get("tree")); 
     
-    // 准备原始Tree的变量和分支对象
     std::vector<float> *part_px = nullptr;
     std::vector<float> *part_py = nullptr;
     std::vector<float> *part_pz = nullptr;
@@ -31,7 +29,6 @@ int main() {
     std::vector<int32_t> *part_isMuon = nullptr;
     int aux_delphes_event_id;
     
-    // 关联分支地址
     inputTree->SetBranchAddress("part_px", &part_px);
     inputTree->SetBranchAddress("part_py", &part_py);
     inputTree->SetBranchAddress("part_pz", &part_pz);
@@ -50,7 +47,6 @@ int main() {
     inputTree->SetBranchAddress("part_isMuon", &part_isMuon);
     inputTree->SetBranchAddress("aux_delphes_event_id", &aux_delphes_event_id);
     
-    // 用于存放合并后数据的容器
     std::map<int, std::vector<float>> merged_px;
     std::map<int, std::vector<float>> merged_py;
     std::map<int, std::vector<float>> merged_pz;
@@ -69,7 +65,6 @@ int main() {
     std::map<int, std::vector<int32_t>> merged_isMuon;
 
     
-    // 循环遍历原始Tree的所有条目
     Long64_t nEntries = inputTree->GetEntries();
     for (Long64_t i = 0; i < nEntries; ++i) {
         inputTree->GetEntry(i);
@@ -92,14 +87,11 @@ int main() {
        merged_isMuon[aux_delphes_event_id].insert(merged_isMuon[aux_delphes_event_id].end(), part_isMuon->begin(), part_isMuon->end());
     }
     
-    // 关闭输入文件
     inputFile->Close();
     
-    // 创建新的ROOT文件和新的Tree来存储合并的数据
     TFile *outputFile = new TFile("output.root", "RECREATE");
     TTree *outputTree = new TTree("MergedTree", "Tree with merged events");
     
-    // 创建新的变量和新的分支
     std::vector<float> out_px, out_py, out_pz, out_energy;
     std::vector<float> out_deta, out_dphi, out_d0val, out_d0err, out_dzval, out_dzerr, out_charge;
     std::vector<int32_t> out_isChargedHadron, out_isNeutralHadron, out_isPhoton, out_isElectron, out_isMuon;
@@ -122,7 +114,6 @@ int main() {
     outputTree->Branch("part_isMuon", &out_isMuon);
     outputTree->Branch("aux_delphes_event_id", &out_aux_delphes_event_id);
     
-    // 填充新Tree
     for (const auto &entry : merged_px) {
     int event_id = entry.first;
     out_aux_delphes_event_id = event_id;
@@ -146,11 +137,9 @@ int main() {
         outputTree->Fill();
     }
     
-    // 写入到新文件和清理工作
     outputFile->Write();
     outputFile->Close();
     
-    // 清理
     delete inputFile;
     delete outputFile;
     
