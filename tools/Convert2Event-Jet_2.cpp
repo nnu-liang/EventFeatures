@@ -7,8 +7,27 @@
 #include "TTree.h"
 #include "TBranch.h"
 
-int main() {
-    TFile *inputFile = new TFile("hzbbvv_output.root", "READ");
+int main(int argc, char* argv[]) {
+    if (argc != 4) {
+        std::cerr << "Usage: " << argv[0] << " input.root output.root label" << std::endl;
+        return 1;
+    }
+
+    std::string inputFileName = argv[1];
+    std::string outputFileName = argv[2];
+    std::string label = argv[3];
+    bool isSig_HH = (label == "Sig_HH");
+    bool isBkg_H2b = (label == "Bkg_H2b");
+    bool isBkg_ZZ = (label == "Bkg_ZZ");
+    bool isBkg_ZH = (label == "Bkg_ZH");
+    bool isBkg_TTBar = (label == "Bkg_TTBar");
+    bool isBkg_TTBarH = (label == "Bkg_TTBarH");
+    bool isBkg_TTBar2b = (label == "Bkg_TTBar2b");
+    bool isBkg_4b = (label == "Bkg_4b");
+    bool isBkg_2b2j = (label == "Bkg_2b2j");
+    
+    
+    TFile *inputFile = new TFile(inputFileName.c_str(), "READ");
     TTree *inputTree = static_cast<TTree*>(inputFile->Get("tree")); 
     
     std::vector<float> *part_px = nullptr;
@@ -89,13 +108,32 @@ int main() {
     
     inputFile->Close();
     
-    TFile *outputFile = new TFile("output.root", "RECREATE");
+    TFile *outputFile = new TFile(outputFileName.c_str(), "RECREATE");
     TTree *outputTree = new TTree("MergedTree", "Tree with merged events");
     
     std::vector<float> out_px, out_py, out_pz, out_energy;
     std::vector<float> out_deta, out_dphi, out_d0val, out_d0err, out_dzval, out_dzerr, out_charge;
     std::vector<int32_t> out_isChargedHadron, out_isNeutralHadron, out_isPhoton, out_isElectron, out_isMuon;
     int out_aux_delphes_event_id;
+    bool out_Sig_HH, out_Bkg_ZZ, out_Bkg_H2b, out_Bkg_ZH, out_Bkg_TTBar, out_Bkg_TTBarH, out_Bkg_TTBar2b, out_Bkg_4b, out_Bkg_2b2j;
+    outputTree->Branch("Sig_HH", &out_Sig_HH);
+    outputTree->Branch("Bkg_ZZ", &out_Bkg_ZZ);
+    outputTree->Branch("Bkg_H2b", &out_Bkg_H2b);
+    outputTree->Branch("Bkg_ZH", &out_Bkg_ZH);
+    outputTree->Branch("Bkg_TTBar", &out_Bkg_TTBar);
+    outputTree->Branch("Bkg_TTBarH", &out_Bkg_TTBarH);
+    outputTree->Branch("Bkg_TTBar2b", &out_Bkg_TTBar2b);
+    outputTree->Branch("Bkg_4b", &out_Bkg_4b);
+    outputTree->Branch("Bkg_2b2j", &out_Bkg_2b2j);
+    
+    
+    
+    
+    
+    
+    
+    
+    
     outputTree->Branch("part_px", &out_px);
     outputTree->Branch("part_py", &out_py);
     outputTree->Branch("part_pz", &out_pz);
@@ -133,6 +171,15 @@ int main() {
     out_isPhoton = merged_isPhoton[event_id];
     out_isElectron = merged_isElectron[event_id];
     out_isMuon = merged_isMuon[event_id];
+    out_Sig_HH = isSig_HH;
+    out_Bkg_ZZ = isBkg_ZZ;
+    out_Bkg_H2b = isBkg_H2b;
+    out_Bkg_ZH = isBkg_ZH;
+    out_Bkg_TTBar = isBkg_TTBar;
+    out_Bkg_TTBarH = isBkg_TTBarH;
+    out_Bkg_TTBar2b = isBkg_TTBar2b;
+    out_Bkg_4b = isBkg_4b;
+    out_Bkg_2b2j = isBkg_2b2j;
         
         outputTree->Fill();
     }
