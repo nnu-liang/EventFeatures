@@ -33,7 +33,7 @@ void FatJet::FillTree(int event_id) {
     Tower *tower;
     TLorentzVector pj;
     TLorentzVector pv;
-    std::vector<TLorentzVector> pds;
+    std::vector<std::vector<TLorentzVector> > pds;
     // * First find out the ``first copy'' of the decay products of particle with pid: m_pid
     for (size_t ipart = 0; ipart < m_branchParticle->GetEntriesFast(); ipart++) {
         part = (GenParticle *)m_branchParticle->At(ipart);
@@ -41,28 +41,38 @@ void FatJet::FillTree(int event_id) {
         if (part->D1 == part->D2) continue;
         int id_d1 = part->D1;
         int id_d2 = part->D2;
+        std::vector<TLorentzVector> tmp;
+        int nd = 0;
         for (size_t idd = id_d1; idd <= id_d2; idd++) {
             part_D = (GenParticle *)m_branchParticle->At(idd);
             if (abs(part_D->PID) == 12) continue;
             if (abs(part_D->PID) == 14) continue;
             if (abs(part_D->PID) == 16) continue;
-            pds.push_back(part_D->P4());
+            nd += 1;
+            tmp.push_back(part_D->P4());
         }
-        if (pds.size() != 0) break;
+        if (nd != 0) pds.push_back(tmp);
     }
 
     for (size_t ijet = 0; ijet < m_branchFatJet->GetEntriesFast(); ijet++) {
         CleanFeatures();
         jet = (Jet *)m_branchFatJet->At(ijet);
-        if (fabs(jet->Eta) > m_eta_abs_max) continue;
-        if (jet->PT > m_pt_max || jet->PT < m_pt_min) continue;
+        if (m_label != l_Pred && fabs(jet->Eta) > m_eta_abs_max) continue;
+        if (m_label != l_Pred && (jet->PT > m_pt_max || jet->PT < m_pt_min)) continue;
         pj = jet->P4();
-        bool good_parton = true;
-        for (size_t iparton = 0; iparton < pds.size(); iparton++) {
-            good_parton = pj.DeltaR(pds[iparton]) < m_dR_jet_parton;
-            if (!good_parton) break;
+        if (m_label != l_Pred) {
+            int good_parton_any = 0;
+            for (size_t imp = 0; imp < pds.size(); imp++) {
+                auto &tmp = pds[imp];
+                bool good_parton = true;
+                for (size_t iparton = 0; iparton < tmp.size(); iparton++) {
+                    good_parton = pj.DeltaR(tmp[iparton]) < m_dR_jet_parton;
+                    if (!good_parton) break;
+                }
+                good_parton_any |= good_parton << imp;
+            }
+            if (0 == good_parton_any) continue;
         }
-        if (!good_parton) continue;
         jet_pt = jet->PT;
         jet_eta = jet->Eta;
         jet_phi = jet->Phi;

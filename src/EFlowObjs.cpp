@@ -72,7 +72,8 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs() {
     return m_objs;
 }
 
-EFlowObjs::TVs_t &EFlowObjs::FindDecayProducts(int m_pid) {
+std::vector<EFlowObjs::TVs_t> &EFlowObjs::FindDecayProducts(int m_pid) {
+    // * We will try to find all possible decay products from mother particle id m_pid;
     m_TVs.clear();
     GenParticle *part;
     GenParticle *part_D;
@@ -82,14 +83,15 @@ EFlowObjs::TVs_t &EFlowObjs::FindDecayProducts(int m_pid) {
         if (part->D1 == part->D2) continue;
         int id_d1 = part->D1;
         int id_d2 = part->D2;
+        TVs_t tmp;
         for (size_t idd = id_d1; idd <= id_d2; idd++) {
             part_D = (GenParticle *)m_branchParticle->At(idd);
             if (abs(part_D->PID) == 12) continue;
             if (abs(part_D->PID) == 14) continue;
             if (abs(part_D->PID) == 16) continue;
-            m_TVs.push_back(part_D->P4());
+            tmp.push_back(part_D->P4());
         }
-        if (m_TVs.size() != 0) break;
+        m_TVs.push_back(tmp);
     }
     return m_TVs;
 }

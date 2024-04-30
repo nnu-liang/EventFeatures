@@ -8,6 +8,7 @@ class TTree;
 class TBranch;
 
 enum ParTLABEL {
+    l_Pred = -1,
     l_QCD_g = 0,
     l_QCD_b = 1,
     l_QCD_j = 2,
@@ -28,8 +29,8 @@ public:
     typedef std::vector<float> vf_t;
     typedef std::vector<int32_t> vi_t;
 
-    ParTFeatures(){};
-    ~ParTFeatures(){};
+    ParTFeatures() {};
+    ~ParTFeatures() {};
 
     vf_t part_px;
     vf_t part_py;

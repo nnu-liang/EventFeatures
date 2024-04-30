@@ -146,6 +146,8 @@ void ParTFeatures::CleanFeatures() {
 
 int ParTFeatures::GetMotherParticlePID(const ParTLABEL lab) const {
     switch (lab) {
+        case l_Pred:
+            return -1;
         case l_QCD_g:
         case l_QCD_j:
             return 0;
@@ -216,6 +218,9 @@ void ParTFeatures::SetParTLabel(const ParTLABEL label) {
             return;
         case l_Zbb:
             label_Zbb = 1;
+            return;
+        case l_Pred:
+        default:
             return;
     }
 }

@@ -50,13 +50,14 @@ EFlowJet::~EFlowJet() {
 
 void EFlowJet::FillTree(int event_id) {
     SetEFlowObjs();
-    EFlowObjs::TVs_t &m_tmp = FindDecayProducts(m_pid);
+    std::vector<EFlowObjs::TVs_t> &m_tmp = FindDecayProducts(m_pid);
     TLorentzVector pj;
     for (size_t i_jet = 0; i_jet < m_jets.size(); i_jet++) {
         CleanFeatures();
         fastjet::PseudoJet &jet = m_jets[i_jet];
-        if (fabs(jet.eta()) > m_eta_abs_max) continue;
-        if (jet.pt() > m_pt_max) continue;
+        if (m_label != l_Pred && fabs(jet.eta()) > m_eta_abs_max)
+            continue;  // ! Only cut if we do not prepare the data for prediction;
+        if (m_label != l_Pred && jet.pt() > m_pt_max) continue;
         std::vector<fastjet::PseudoJet> jet_particles = jet.constituents();
         jet_pt = jet.pt();
         jet_eta = jet.eta();
@@ -64,12 +65,19 @@ void EFlowJet::FillTree(int event_id) {
         jet_phi = jet_phi_tmp > M_PI ? jet_phi_tmp - 2 * M_PI : jet_phi_tmp;  // * [-pi,pi]
         jet_energy = jet.E();
         pj.SetPtEtaPhiE(jet_pt, jet_eta, jet_phi, jet_energy);
-        bool good_parton = true;
-        for (size_t iparton = 0; iparton < m_tmp.size(); iparton++) {
-            good_parton = pj.DeltaR(m_tmp[iparton]) < m_dR_jet_parton;
-            if (!good_parton) break;
+        if (m_label != l_Pred) {  // ! We only check the dR of parton with jet when we prepare the training data
+            int good_parton_any = 0;
+            for (size_t imp = 0; imp < m_tmp.size(); imp++) {
+                auto &tmp = m_tmp[imp];
+                bool good_parton = true;
+                for (size_t iparton = 0; iparton < tmp.size(); iparton++) {
+                    good_parton = pj.DeltaR(tmp[iparton]) < m_dR_jet_parton;
+                    if (!good_parton) break;
+                }
+                good_parton_any |= good_parton << imp;
+            }
+            if (0 == good_parton_any) continue;
         }
-        if (!good_parton) continue;
         jet_nparticles = jet_particles.size();
         fastjet::PseudoJet softdrop_jet = (*m_SoftDrop)(jet);
         jet_sdmass = softdrop_jet.m();  // jet.m();
