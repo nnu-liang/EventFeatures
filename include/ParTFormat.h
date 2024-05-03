@@ -8,7 +8,7 @@ class TTree;
 class TBranch;
 
 enum ParTLABEL {
-    l_Pred = -1,
+    l_Pred = -1,  // * Used for Prediction where we don't need to assign label (or we even don't know the label)
     l_QCD_g = 0,
     l_QCD_b = 1,
     l_QCD_j = 2,
