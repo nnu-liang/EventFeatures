@@ -14,12 +14,14 @@ MADSPIN_CARD_PATH="$7"
 DUMMY_FCT_PATH="$8"
 DELPHES_CARD_PATH="/home/liang/Workingspace/Tagging/inputs/delphes_card_CMS.dat"
 RUN_CARD_PATH="/home/liang/Workingspace/Tagging/inputs/run_card.dat"
-
+RUN_CARD_PATH2="/home/liang/Workingspace/Tagging/inputs/run_card_2.dat"
 if [ ! -d "$ROOT_FILE_DIR" ]; then
     mkdir -p "$ROOT_FILE_DIR"
 fi
 
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+TIMESTAMP=$(date +%s)
+SEED=$((TIMESTAMP % 904864961))
+sed -i "s/[0-9]*   = iseed/${SEED}   = iseed/" /home/liang/Workingspace/Tagging/inputs/run_card_2.dat
 PROCESS_DIR="${OUTPUT_DIR}/${PROCESS_NAME}_${TIMESTAMP}"
 
 if [ -d "$PROCESS_DIR" ]; then
@@ -56,7 +58,7 @@ launch $PROCESS_DIR
 done
 $MADSPIN_CARD_PATH
 $DELPHES_CARD_PATH
-$RUN_CARD_PATH
+$RUN_CARD_PATH2
 exit
 EOF
         else
@@ -66,7 +68,7 @@ launch $PROCESS_DIR
 2
 done
 $DELPHES_CARD_PATH
-$RUN_CARD_PATH
+$RUN_CARD_PATH2
 exit
 EOF
         fi
