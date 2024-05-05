@@ -60,7 +60,7 @@ void FatJet::FillTree(int event_id) {
         if (m_label != l_Pred && fabs(jet->Eta) > m_eta_abs_max) continue;
         if (m_label != l_Pred && (jet->PT > m_pt_max || jet->PT < m_pt_min)) continue;
         pj = jet->P4();
-        if (m_label != l_Pred) {
+        if (m_label != l_Pred && m_label != l_QCD_b && m_label != l_QCD_g && m_label != l_QCD_j) {
             int good_parton_any = 0;
             for (size_t imp = 0; imp < pds.size(); imp++) {
                 auto &tmp = pds[imp];
