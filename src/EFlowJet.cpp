@@ -65,7 +65,8 @@ void EFlowJet::FillTree(int event_id) {
         jet_phi = jet_phi_tmp > M_PI ? jet_phi_tmp - 2 * M_PI : jet_phi_tmp;  // * [-pi,pi]
         jet_energy = jet.E();
         pj.SetPtEtaPhiE(jet_pt, jet_eta, jet_phi, jet_energy);
-        if (m_label != l_Pred) {  // ! We only check the dR of parton with jet when we prepare the training data
+        if (m_label != l_Pred && m_label != l_QCD_b && m_label != l_QCD_g &&
+            m_label != l_QCD_j) {  // ! We only check the dR of parton with jet when we prepare the training data
             int good_parton_any = 0;
             for (size_t imp = 0; imp < m_tmp.size(); imp++) {
                 auto &tmp = m_tmp[imp];
