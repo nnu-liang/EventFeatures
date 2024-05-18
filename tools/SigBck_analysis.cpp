@@ -33,6 +33,7 @@ void updateLabelHbb(const char* filename) {
     tree->SetBranchAddress("score_label_Wqq", &score_Wqq);
     tree->SetBranchAddress("score_label_Tbqq", &score_Tbqq);
     tree->SetBranchAddress("score_label_Tbl", &score_Tbl);
+    tree->SetBranchAddress("score_label_Zbb", &score_Zbb);
 
     TBranch* label_Hbb1_Branch = tree->Branch("label_Hbb1", &label_Hbb1, "label_Hbb1/O");
     Long64_t nEntries = tree->GetEntries();
@@ -41,7 +42,7 @@ void updateLabelHbb(const char* filename) {
         std::vector<float> scores = {
             score_QCD, score_Hbb, score_Hcc, score_Hgg,
             score_H4q, score_Hqql, score_Zqq, score_Wqq,
-            score_Tbqq, score_Tbl
+            score_Tbqq, score_Tbl, score_Zbb
         };
         label_Hbb1 = (score_Hbb == *std::max_element(scores.begin(), scores.end()));
         label_Hbb1_Branch->Fill();
@@ -94,16 +95,18 @@ void analysis(const char* outputRootPath, const char* predictRootPath) {
             backgroundEventNumbers.push_back(eventCountPair.first);
         }
     }
+    Int_t TP = signalEventNumbers.size(); 
+    Int_t FN = 10000 - TP;                 
+    Int_t TN = 0;
+    Int_t FP = 0;                           
 
-    std::ofstream signalFile("signal_event_numbers.txt");
-    std::ofstream backgroundFile("background_event_numbers.txt");
+    std::ofstream confusionFile("confusion_matrix.txt");
+    confusionFile << "TN: " << TN << "\n";
+    confusionFile << "FP: " << FP << "\n";
+    confusionFile << "TP: " << TP << "\n";
+    confusionFile << "FN: " << FN << "\n";
+    confusionFile.close();
 
-    for (int eventNum : signalEventNumbers) {
-        signalFile << eventNum << "\n";
-    }
-    for (int eventNum : backgroundEventNumbers) {
-        backgroundFile << eventNum << "\n";
-    }
 
     outputFile->Close();
     predictFile->Close();
