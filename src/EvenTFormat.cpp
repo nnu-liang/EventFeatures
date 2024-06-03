@@ -5,7 +5,7 @@
 
 #define ADDBRANCH(x) m_b_##x = t->Branch(#x, &x);
 
-void EvenTFormat::SetUpBranches(TTree *t) {
+void EvenTFeatures::SetUpBranches(TTree *t) {
     m_tree = t;
     ADDBRANCH(part_px);
     ADDBRANCH(part_py);
@@ -60,9 +60,9 @@ void EvenTFormat::SetUpBranches(TTree *t) {
     ADDBRANCH(label_2b2j);
 }
 
-void EvenTFormat::FillBranches() { m_tree->Fill(); }
+void EvenTFeatures::FillBranches() { m_tree->Fill(); }
 
-void EvenTFormat::CleanFeatures() {
+void EvenTFeatures::CleanFeatures() {
     part_px.clear();
     part_py.clear();
     part_pz.clear();
@@ -119,7 +119,7 @@ void EvenTFormat::CleanFeatures() {
     label_2b2j = false;
 }
 
-void EvenTFormat::SetEvenTLabel(const EvenTLABEL label) {
+void EvenTFeatures::SetEvenTLabel(const EvenTLABEL label) {
     label_hh_4b = false;
     label_tth_4b4j = false;
     label_ttbb_4b4j = false;
@@ -136,8 +136,8 @@ void EvenTFormat::SetEvenTLabel(const EvenTLABEL label) {
         case l_ttbb_4b4j:
             label_ttbb_4b4j = true;
             return;
-        case l_hbb_4b4j:
-            label_hbb_4b4j = true;
+        case l_hbb_4b:
+            label_hbb_4b = true;
             return;
         case l_4b:
             label_4b = true;

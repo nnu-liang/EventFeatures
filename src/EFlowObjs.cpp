@@ -15,6 +15,7 @@ EFlowObjs::~EFlowObjs() {}
 
 EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs() {
     m_objs.clear();
+    int index_tmp = 0;
     // m_treeReader->ReadEntry(entry);
     // cout << " Reading Event-" << entry << endl;
 
@@ -36,9 +37,10 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs() {
 #endif
         l_p_tmp = l_tower->P4();
         l_pseudojet = fastjet::PseudoJet(l_p_tmp.Px(), l_p_tmp.Py(), l_p_tmp.Pz(), l_p_tmp.E());
-        l_pseudojet.set_user_info(new ParticleExtraInfo(22, 0));
+        l_pseudojet.set_user_info(new ParticleExtraInfo(index_tmp, 22, 0));
         l_pseudojet.set_user_index(22);
         m_objs.push_back(l_pseudojet);
+        index_tmp += 1;
     }
 
 // * From EFlowNeutralHadron
@@ -53,9 +55,10 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs() {
 #endif
         l_p_tmp = l_tower->P4();
         l_pseudojet = fastjet::PseudoJet(l_p_tmp.Px(), l_p_tmp.Py(), l_p_tmp.Pz(), l_p_tmp.E());
-        l_pseudojet.set_user_info(new ParticleExtraInfo(0, 0));
+        l_pseudojet.set_user_info(new ParticleExtraInfo(index_tmp, 0, 0));
         l_pseudojet.set_user_index(0);
         m_objs.push_back(l_pseudojet);
+        index_tmp += 1;
     }
 
     // * From EFlowTrack
@@ -63,10 +66,11 @@ EFlowObjs::EFlowObjs_t &EFlowObjs::GetEFlowObjs() {
         l_track = (Track *)m_branchEFlowTrack->At(i_Track);
         l_part = (GenParticle *)l_track->Particle.GetObject();
         l_pseudojet = fastjet::PseudoJet(l_part->Px, l_part->Py, l_part->Pz, l_part->E);
-        l_pseudojet.set_user_info(new ParticleExtraInfo(l_part->PID, l_part->Charge, l_track->D0, l_track->ErrorD0,
-                                                        l_track->DZ, l_track->ErrorDZ));
+        l_pseudojet.set_user_info(new ParticleExtraInfo(index_tmp, l_part->PID, l_part->Charge, l_track->D0,
+                                                        l_track->ErrorD0, l_track->DZ, l_track->ErrorDZ));
         l_pseudojet.set_user_index(l_part->PID);
         m_objs.push_back(l_pseudojet);
+        index_tmp += 1;
     }
 
     return m_objs;

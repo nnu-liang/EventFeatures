@@ -6,7 +6,7 @@
 class TTree;
 class TBranch;
 
-enum EvenTLABEL { l_Pred = -1, l_hh_4b = 0, l_tth_4b4j = 1, l_ttbb_4b4j = 2, l_hbb_4b4j = 3, l_4b = 4, l_2b2j = 5 };
+enum EvenTLABEL { l_Pred = -1, l_hh_4b = 0, l_tth_4b4j = 1, l_ttbb_4b4j = 2, l_hbb_4b = 3, l_4b = 4, l_2b2j = 5 };
 
 class EvenTFeatures {
 public:
@@ -77,7 +77,7 @@ public:
     virtual void SetUpBranches(TTree *t);
     virtual void FillTree() = 0;
     void FillBranches();
-    void CleanFreatures();
+    void CleanFeatures();
 
     void SetEvenTLabel(const EvenTLABEL label);
 
@@ -115,7 +115,7 @@ private:
     TBranch *m_b_jet_ncharged;
     TBranch *m_b_jet_nneutral;
     TBranch *m_b_jet_neutralenergyfraction;
-    TBranch *m_b_jet_chargeenergyfraction;
+    TBranch *m_b_jet_chargedenergyfraction;
     TBranch *m_b_jet_tau1;
     TBranch *m_b_jet_tau2;
     TBranch *m_b_jet_tau3;
