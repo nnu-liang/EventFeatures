@@ -12,7 +12,11 @@ if [ ! -f "$CONFIG_FILE" ];then
 fi
 
 BACKGROUND_DIR=$(grep '^background_dir=' "$CONFIG_FILE" | cut -d'=' -f2)
+B_sim=$(grep '^background_dir=' "$CONFIG_FILE" | awk '{print $2}')
+B_exp=$(grep '^background_dir=' "$CONFIG_FILE" | awk '{print $3}')
 SIGNAL_SM_DIR=$(grep '^signal_SM_dir=' "$CONFIG_FILE" | cut -d'=' -f2)
+S_sim_SM=$(grep '^signal_SM_dir=' "$CONFIG_FILE" | awk '{print $2}')
+S_exp_SM=$(grep '^signal_SM_dir=' "$CONFIG_FILE" | awk '{print $3}')
 SIGNAL_ENTRIES=($(grep '^signal_dir[0-9]*=' "$CONFIG_FILE"))
 
 BACKGROUND_OUTPUT_DIR=$(grep '^background_output_dir=' "$CONFIG_FILE" | cut -d'=' -f2)
@@ -49,6 +53,8 @@ for (( i=0; i<${#SIGNAL_ENTRIES[@]}; i++ )); do
     total_S[i]=(0 0 0 0 0 0)
     total_chi_squared[i]=0
     kappa_lambda_values[i]=$(echo "${SIGNAL_ENTRIES[i]}" | awk '{print $2}')
+    S_sim[i]=$(echo "${SIGNAL_ENTRIES[i]}" | awk '{print $3}')
+    S_exp[i]=$(echo "${SIGNAL_ENTRIES[i]}" | awk '{print $4}')
 done
 
 process_file() {
@@ -154,17 +160,46 @@ done
 
 zeta_b=0.1
 
-for (( i=0; i<${#SIGNAL_ENTRIES[@]}; i++ )); do
+or (( i=0; i<${#SIGNAL_ENTRIES[@]}; i++ )); do
     for j in {0..5}; do
-        S=${total_S[i][j]}
+        S_rem=${total_S[i][j]}
+        B_rem=${total_B[j]}
         SM=${total_SM[j]}
-        B=${total_B[j]}
-        total_chi_squared[i]=$(echo "${total_chi_squared[i]} + (($S - $SM)^2) / ($B + ($zeta_b * $B)^2)" | bc -l)
+        
+        S=$(echo "$S_rem * $S_exp / $S_sim" | bc -l)
+        B=$(echo "$B_rem * $B_exp / $B_sim" | bc -l)
+        S_SM=$(echo "$S_rem * $S_exp_SM / $S_sim_SM" | bc -l)
+
+        numerator=$(echo "($S - $S_SM)^2" | bc -l)
+        denominator=$(echo "$B + ($zeta_b * $B)^2" | bc -l)
+        chi2_bin=$(echo "$numerator / $denominator" | bc -l)
+        chi2_i+=($chi2_bin)
+
+        dchi2_dS_sim=$(echo "-2 * ($S - $S_SM) * $S_rem * $S_exp / ($S_sim^2 * $denominator)" | bc -l)
+        dchi2_dS_sim_SM=$(echo "2 * ($S - $S_SM) * $S_rem * $S_exp_SM / ($S_sim_SM^2 * $denominator)" | bc -l)
+        dchi2_dB_sim=$(echo "-$numerator / ($denominator^2) * (-$B_rem * $B_exp / ($B_sim^2) + 2 * $zeta_b^2 * $B_rem^2 * ($B_exp^2 / ($B_sim^3)))" | bc -l)
+
+        sigma_S_sim=$(echo "sqrt($S_sim)" | bc -l)
+        sigma_S_sim_SM=$(echo "sqrt($S_sim_SM)" | bc -l)
+        sigma_B_sim=$(echo "sqrt($B_sim)" | bc -l)
+
+        sigma_chi2_bin=$(echo "sqrt(($dchi2_dS_sim * $sigma_S_sim)^2 + ($dchi2_dS_sim_SM * $sigma_S_sim_SM)^2 + ($dchi2_dB_sim * $sigma_B_sim)^2)" | bc -l)
+        sigma_chi2_i+=($sigma_chi2_bin)
     done
 done
 
-python3 plot_chi_square_kappa_lambda.py "${total_chi_squared[@]}" "${kappa_lambda_values[@]}"
+total_chi2=0
+total_sigma_chi2=0
 
+for (( k=0; k<${#chi2_i[@]}; k++ )); do
+    total_chi2=$(echo "$total_chi2 + ${chi2_i[k]}" | bc -l)
+    total_sigma_chi2=$(echo "$total_sigma_chi2 + (${sigma_chi2_i[k]}^2)" | bc -l)
+done
 
-echo "over"
+total_sigma_chi2=$(echo "sqrt($total_sigma_chi2)" | bc -l)
 
+relative_error=$(echo "$total_sigma_chi2 / $total_chi2" | bc -l)
+
+echo "Total chi² = $total_chi2"
+echo "Total sigma chi² = $total_sigma_chi2"
+echo "Relative error = $relative_error"
