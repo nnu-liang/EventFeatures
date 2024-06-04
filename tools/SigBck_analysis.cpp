@@ -5,6 +5,16 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <cmath>
+
+float calculateInvariantMass(float pt, float eta, float phi, float energy) {
+    float px = pt * std::cos(phi);
+    float py = pt * std::sin(phi);
+    float pz = pt * std::sinh(eta);
+    float mass2 = energy*energy - px*px - py*py - pz*pz;
+    return (mass2 > 0) ? std::sqrt(mass2) : 0.0;
+}
+
 
 void updateLabelHbb(const char* filename) {
     TFile* file = new TFile(filename, "UPDATE");
@@ -33,7 +43,7 @@ void updateLabelHbb(const char* filename) {
     tree->SetBranchAddress("score_label_Wqq", &score_Wqq);
     tree->SetBranchAddress("score_label_Tbqq", &score_Tbqq);
     tree->SetBranchAddress("score_label_Tbl", &score_Tbl);
-    tree->SetBranchAddress("score_label_Zbb", &score_Zbb);
+
 
     TBranch* label_Hbb1_Branch = tree->Branch("label_Hbb1", &label_Hbb1, "label_Hbb1/O");
     Long64_t nEntries = tree->GetEntries();
@@ -42,9 +52,9 @@ void updateLabelHbb(const char* filename) {
         std::vector<float> scores = {
             score_QCD, score_Hbb, score_Hcc, score_Hgg,
             score_H4q, score_Hqql, score_Zqq, score_Wqq,
-            score_Tbqq, score_Tbl, score_Zbb
+            score_Tbqq, score_Tbl
         };
-        label_Hbb1 = (score_Hbb == *std::max_element(scores.begin(), scores.end()));
+        bool isHbbLargestScore = (score_Hbb == *std::max_element(scores.begin(), scores.end()));
         label_Hbb1_Branch->Fill();
     }
 
@@ -66,47 +76,64 @@ void analysis(const char* outputRootPath, const char* predictRootPath) {
 
     outputTree->SetBranchAddress("aux_delphes_event_id", &aux_delphes_event_id);
     predictTree->SetBranchAddress("label_Hbb1", &label_Hbb1);
+    
+    float jet_pt, jet_eta, jet_phi, jet_energy;
+    outputTree->SetBranchAddress("jet_pt", &jet_pt);
+    outputTree->SetBranchAddress("jet_eta", &jet_eta);
+    outputTree->SetBranchAddress("jet_phi", &jet_phi);
+    outputTree->SetBranchAddress("jet_energy", &jet_energy);
 
     std::map<int, int> hbbTrueCountForEvent;
+    std::map<int, std::vector<std::tuple<float, float, float, float>>> eventIDToJetPropertiesMap;
 
-    Long64_t nEntries = predictTree->GetEntries();
 
-    for (Long64_t entryIdx = 0; entryIdx < nEntries; ++entryIdx) {
-        outputTree->GetEntry(entryIdx);
+    Long64_t nPredictEntries = predictTree->GetEntries();
+    Long64_t nOutputEntries = outputTree->GetEntries();
+
+    for (Long64_t entryIdx = 0; entryIdx < nPredictEntries; ++entryIdx) {
         predictTree->GetEntry(entryIdx);
-
         if (label_Hbb1) {
             hbbTrueCountForEvent[aux_delphes_event_id]++;
         }
     }
 
-    std::cout << "Starting to process " << nEntries << " entries." << std::endl;
-    for (const auto& pair : hbbTrueCountForEvent) {
-        std::cout << "Event ID: " << pair.first << " Count of True Hbb: " << pair.second << std::endl;
+    for (Long64_t entryIdx = 0; entryIdx < nOutputEntries; ++entryIdx) {
+        outputTree->GetEntry(entryIdx);
+        eventIDToJetPropertiesMap[aux_delphes_event_id].emplace_back(jet_pt, jet_eta, jet_phi, jet_energy);
     }
-    std::cout << "Finished processing entries." << std::endl;
+
+
     std::vector<int> signalEventNumbers;
-    std::vector<int> backgroundEventNumbers;
 
     for (const auto& eventCountPair : hbbTrueCountForEvent) {
         if (eventCountPair.second >= 2) {
             signalEventNumbers.push_back(eventCountPair.first);
-        } else {
-            backgroundEventNumbers.push_back(eventCountPair.first);
         }
     }
-    Int_t TP = signalEventNumbers.size(); 
-    Int_t FN = 10000 - TP;                 
-    Int_t TN = 0;
-    Int_t FP = 0;                           
 
-    std::ofstream confusionFile("confusion_matrix.txt");
-    confusionFile << "TN: " << TN << "\n";
-    confusionFile << "FP: " << FP << "\n";
-    confusionFile << "TP: " << TP << "\n";
-    confusionFile << "FN: " << FN << "\n";
-    confusionFile.close();
+    std::ofstream signalFile("signal_event_numbers.txt");
 
+    for (int eventNum : signalEventNumbers) {
+        auto it = eventIDToJetPropertiesMap.find(eventNum);
+        if (it != eventIDToJetPropertiesMap.end()) {
+            std::vector<float> masses;
+            for (const auto& jetProps : it->second) {
+                float pt, eta, phi, energy;
+                std::tie(pt, eta, phi, energy) = jetProps;
+                float jetMass = calculateInvariantMass(pt, eta, phi, energy);
+                if (jetMass >= 100 && jetMass <= 140) {
+                    masses.push_back(jetMass);
+                }
+            }
+            if (!masses.empty()) {
+                signalFile << eventNum;
+                for (float mass : masses) {
+                    signalFile << " " << mass;
+                }
+                signalFile << std::endl;
+            }
+        }
+    }
 
     outputFile->Close();
     predictFile->Close();
@@ -121,4 +148,3 @@ int main(int argc, char** argv) {
     analysis(argv[1], argv[2]);
     return 0;
 }
-
