@@ -5,6 +5,16 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <cmath>
+
+float calculateInvariantMass(float pt, float eta, float phi, float energy) {
+    float px = pt * std::cos(phi);
+    float py = pt * std::sin(phi);
+    float pz = pt * std::sinh(eta);
+    float mass2 = energy*energy - px*px - py*py - pz*pz;
+    return (mass2 > 0) ? std::sqrt(mass2) : 0.0;
+}
+
 
 void updateLabelHbb(const char* filename) {
     TFile* file = new TFile(filename, "UPDATE");
@@ -22,7 +32,7 @@ void updateLabelHbb(const char* filename) {
     }
 
     Bool_t label_Hbb1;
-    float score_QCD, score_Hbb, score_Hcc, score_Hgg, score_H4q, score_Hqql, score_Zqq, score_Wqq, score_Tbqq, score_Tbl, jet_sdmass;
+    float score_QCD, score_Hbb, score_Hcc, score_Hgg, score_H4q, score_Hqql, score_Zqq, score_Wqq, score_Tbqq, score_Tbl;
     tree->SetBranchAddress("score_label_QCD", &score_QCD);
     tree->SetBranchAddress("score_label_Hbb", &score_Hbb);
     tree->SetBranchAddress("score_label_Hcc", &score_Hcc);
@@ -33,7 +43,6 @@ void updateLabelHbb(const char* filename) {
     tree->SetBranchAddress("score_label_Wqq", &score_Wqq);
     tree->SetBranchAddress("score_label_Tbqq", &score_Tbqq);
     tree->SetBranchAddress("score_label_Tbl", &score_Tbl);
-    tree->SetBranchAddress("jet_sdmass", &jet_sdmass); 
 
 
     TBranch* label_Hbb1_Branch = tree->Branch("label_Hbb1", &label_Hbb1, "label_Hbb1/O");
@@ -46,7 +55,6 @@ void updateLabelHbb(const char* filename) {
             score_Tbqq, score_Tbl
         };
         bool isHbbLargestScore = (score_Hbb == *std::max_element(scores.begin(), scores.end()));
-        label_Hbb1 = isHbbLargestScore && (jet_sdmass > 100.0 && jet_sdmass < 140.0); 
         label_Hbb1_Branch->Fill();
     }
 
@@ -65,14 +73,19 @@ void analysis(const char* outputRootPath, const char* predictRootPath) {
 
     Int_t aux_delphes_event_id;
     Bool_t label_Hbb1;
-    float jet_sdmass; 
 
     outputTree->SetBranchAddress("aux_delphes_event_id", &aux_delphes_event_id);
-    outputTree->SetBranchAddress("jet_sdmass", &jet_sdmass); 
     predictTree->SetBranchAddress("label_Hbb1", &label_Hbb1);
+    
+    float jet_pt, jet_eta, jet_phi, jet_energy;
+    outputTree->SetBranchAddress("jet_pt", &jet_pt);
+    outputTree->SetBranchAddress("jet_eta", &jet_eta);
+    outputTree->SetBranchAddress("jet_phi", &jet_phi);
+    outputTree->SetBranchAddress("jet_energy", &jet_energy);
 
     std::map<int, int> hbbTrueCountForEvent;
-    std::map<int, std::vector<float>> eventIDToJetMassMap;
+    std::map<int, std::vector<std::tuple<float, float, float, float>>> eventIDToJetPropertiesMap;
+
 
     Long64_t nPredictEntries = predictTree->GetEntries();
     Long64_t nOutputEntries = outputTree->GetEntries();
@@ -86,8 +99,9 @@ void analysis(const char* outputRootPath, const char* predictRootPath) {
 
     for (Long64_t entryIdx = 0; entryIdx < nOutputEntries; ++entryIdx) {
         outputTree->GetEntry(entryIdx);
-        eventIDToJetMassMap[aux_delphes_event_id].push_back(jet_mass);
+        eventIDToJetPropertiesMap[aux_delphes_event_id].emplace_back(jet_pt, jet_eta, jet_phi, jet_energy);
     }
+
 
     std::vector<int> signalEventNumbers;
 
@@ -101,10 +115,13 @@ void analysis(const char* outputRootPath, const char* predictRootPath) {
 
     for (int eventNum : signalEventNumbers) {
         signalFile << eventNum;
-        auto it = eventIDToJetMassMap.find(eventNum);
-        if (it != eventIDToJetMassMap.end()) {
-            for (float mass : it->second) {
-                signalFile << " " << mass;
+        auto it = eventIDToJetPropertiesMap.find(eventNum);
+        if (it != eventIDToJetPropertiesMap.end()) {
+            for (const auto& jetProps : it->second) {
+                float pt, eta, phi, energy;
+                std::tie(pt, eta, phi, energy) = jetProps;
+                float jetMass = calculateInvariantMass(pt, eta, phi, energy);
+                signalFile << " " << jetMass;
             }
         }
         signalFile << std::endl;
