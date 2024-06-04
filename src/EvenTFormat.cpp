@@ -21,7 +21,8 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(part_isPhoton);
     ADDBRANCH(part_isElectron);
     ADDBRANCH(part_isMuon);
-    ADDBRANCH(part_jetid);
+    ADDBRANCH(part_slimjetid);
+    ADDBRANCH(part_fatjetid);
 
     ADDBRANCH(jet_px);
     ADDBRANCH(jet_py);
@@ -80,7 +81,8 @@ void EvenTFeatures::CleanFeatures() {
     part_isPhoton.clear();
     part_isElectron.clear();
     part_isMuon.clear();
-    part_jetid.clear();
+    part_slimjetid.clear();
+    part_fatjetid.clear();
 
     jet_px.clear();
     jet_py.clear();

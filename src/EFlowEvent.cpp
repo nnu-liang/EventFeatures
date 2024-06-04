@@ -5,9 +5,9 @@
 
 EFlowEvent::EFlowEvent(EvenTLABEL label, ExRootTreeReader *reader) : EFlowObjs(reader), m_label(label) {
     ConfigParser &gParser = ConfigParser::Get_Global_Parser();
-    m_dR_slim = gParser.Get_Value<double>("SLIM_JET_ANTIKT_dR", 0.4);
+    m_dR_slim = gParser.Get_Value<double>("SLIM_JET_ANTIKT_dR", 0.5);
     m_dR_fat = gParser.Get_Value<double>("FAT_JET_ANTIKT_dR", 1.0);
-    m_pt_min = gParser.Get_Value<double>("JET_PT_MIN", 50);
+    m_pt_min = gParser.Get_Value<double>("JET_PT_MIN", 20);
     m_beta = gParser.Get_Value<double>("JET_BETA", 1.0);
     m_beta_softdrop = gParser.Get_Value<double>("JET_SOFTDROP_BETA", 0.0);
     m_symmetry_cut_softdrop = gParser.Get_Value<double>("JET_SOFTDROP_SYMMETRY_CUT", 0.1);
@@ -87,7 +87,8 @@ void EFlowEvent::FillTree() {
         part_isPhoton.push_back(isPhoton);
         part_isElectron.push_back(isElectron);
         part_isMuon.push_back(isMuon);
-        part_jetid.push_back(vi_t());  // * Will be filled later, when we have reconstructed the jets.
+        part_slimjetid.push_back(-1);  // * Will be filled later, when we have reconstructed the jets.
+        part_fatjetid.push_back(-1);   // *
     }
 
     // * Reconstruct jets
@@ -125,7 +126,8 @@ void EFlowEvent::FillTree() {
                     jet_E_neutral += part_energy_tmp;
                 }
                 int part_index = part_info.get_index();
-                part_jetid[part_index].push_back(jet_id_tmp);
+                if (iR == 0) part_slimjetid[part_index] = jet_id_tmp;
+                if (iR == 1) part_fatjetid[part_index] = jet_id_tmp;
             }
             jet_ncharged.push_back(jet_ncharged_tmp);
             jet_nneutral.push_back(jet_nneutral_tmp);
@@ -152,4 +154,7 @@ void EFlowEvent::FillTree() {
 
     // * For the label
     SetEvenTLabel(m_label);
+
+    // * Fill the entry
+    FillBranches();
 }

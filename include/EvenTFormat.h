@@ -34,7 +34,13 @@ public:
     vi_t part_isPhoton;
     vi_t part_isElectron;
     vi_t part_isMuon;
-    vvi_t part_jetid;
+
+    // * Temporaily using following variables to store the jet id;
+    // * Actually one can use vector<vector<int>>,
+    // * but one needs to generate dictionary for root to handle such class
+    // * which makes things complicated;
+    vi_t part_slimjetid;
+    vi_t part_fatjetid;
     // * We may reconstruct the jet using several different dR in anti-kt algorithm;
     // * Hence the `particle` can belong to jets with different dR;
 
@@ -101,7 +107,8 @@ private:
     TBranch *m_b_part_isPhoton;
     TBranch *m_b_part_isElectron;
     TBranch *m_b_part_isMuon;
-    TBranch *m_b_part_jetid;
+    TBranch *m_b_part_slimjetid;
+    TBranch *m_b_part_fatjetid;
 
     TBranch *m_b_jet_px;
     TBranch *m_b_jet_py;
