@@ -114,17 +114,25 @@ void analysis(const char* outputRootPath, const char* predictRootPath) {
     std::ofstream signalFile("signal_event_numbers.txt");
 
     for (int eventNum : signalEventNumbers) {
-        signalFile << eventNum;
         auto it = eventIDToJetPropertiesMap.find(eventNum);
         if (it != eventIDToJetPropertiesMap.end()) {
+            std::vector<float> masses;
             for (const auto& jetProps : it->second) {
                 float pt, eta, phi, energy;
                 std::tie(pt, eta, phi, energy) = jetProps;
                 float jetMass = calculateInvariantMass(pt, eta, phi, energy);
-                signalFile << " " << jetMass;
+                if (jetMass >= 100 && jetMass <= 140) {
+                    masses.push_back(jetMass);
+                }
+            }
+            if (!masses.empty()) {
+                signalFile << eventNum;
+                for (float mass : masses) {
+                    signalFile << " " << mass;
+                }
+                signalFile << std::endl;
             }
         }
-        signalFile << std::endl;
     }
 
     outputFile->Close();
