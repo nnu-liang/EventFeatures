@@ -11,6 +11,9 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(part_py);
     ADDBRANCH(part_pz);
     ADDBRANCH(part_energy);
+    ADDBRANCH(part_pt);
+    ADDBRANCH(part_eta);
+    ADDBRANCH(part_phi);
     ADDBRANCH(part_d0val);
     ADDBRANCH(part_d0err);
     ADDBRANCH(part_dzval);
