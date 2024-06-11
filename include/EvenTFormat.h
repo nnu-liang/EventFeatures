@@ -2,7 +2,7 @@
 #define EVENT_FORMAT_H_
 
 #include <vector>
-
+#include <cstdint>
 class TTree;
 class TBranch;
 
@@ -34,6 +34,14 @@ public:
     vi_t part_isPhoton;
     vi_t part_isElectron;
     vi_t part_isMuon;
+    vf_t part_dPhi_particle_jet;
+    vf_t part_dPhi_particle_event;
+    vf_t part_dEta_particle_jet;
+    vf_t part_dEta_particle_event;
+    vf_t part_ptrel_particle_jet;
+    vf_t part_ptrel_particle_event;
+    vf_t part_erel_particle_event;
+    vf_t part_erel_particle_jet;
 
     // * Temporaily using following variables to store the jet id;
     // * Actually one can use vector<vector<int>>,
@@ -62,6 +70,9 @@ public:
     vf_t jet_tau3;
     vf_t jet_tau4;
     vf_t jet_antikt_dR;
+    vf_t jet_dEta_jet_event;
+    vf_t jet_ptrel_jet_event;
+   // vf_t jet_dPhi_jet_event;
 
     float event_px;
     float event_py;
@@ -109,6 +120,14 @@ private:
     TBranch *m_b_part_isMuon;
     TBranch *m_b_part_slimjetid;
     TBranch *m_b_part_fatjetid;
+    TBranch *m_b_part_dPhi_particle_jet;
+ //   TBranch *m_b_part_dPhi_particle_event;
+    TBranch *m_b_part_dEta_particle_jet;
+    TBranch *m_b_part_dEta_particle_event;
+    TBranch *m_b_part_ptrel_particle_jet;
+    TBranch *m_b_part_ptrel_particle_event;
+    TBranch *m_b_part_erel_particle_event;
+    TBranch *m_b_part_erel_particle_jet;
 
     TBranch *m_b_jet_px;
     TBranch *m_b_jet_py;
@@ -128,6 +147,9 @@ private:
     TBranch *m_b_jet_tau3;
     TBranch *m_b_jet_tau4;
     TBranch *m_b_jet_antikt_dR;
+    TBranch *m_b_jet_dEta_jet_event;
+    TBranch *m_b_jet_ptrel_jet_event;
+  //  TBranch *m_b_jet_dPhi_jet_event;
 
     TBranch *m_b_event_px;
     TBranch *m_b_event_py;

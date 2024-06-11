@@ -26,6 +26,15 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(part_isMuon);
     ADDBRANCH(part_slimjetid);
     ADDBRANCH(part_fatjetid);
+    ADDBRANCH(part_dPhi_particle_jet);
+  //  ADDBRANCH(part_dPhi_particle_event);
+    ADDBRANCH(part_dEta_particle_jet);
+    ADDBRANCH(part_ptrel_particle_jet);
+    ADDBRANCH(part_erel_particle_jet);
+    ADDBRANCH(part_dEta_particle_event);
+    ADDBRANCH(part_ptrel_particle_event);
+    ADDBRANCH(part_erel_particle_event);
+    
 
     ADDBRANCH(jet_px);
     ADDBRANCH(jet_py);
@@ -45,6 +54,9 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(jet_tau3);
     ADDBRANCH(jet_tau4);
     ADDBRANCH(jet_antikt_dR);
+    ADDBRANCH(jet_dEta_jet_event);
+    ADDBRANCH(jet_ptrel_jet_event);
+  //  ADDBRANCH(jet_dPhi_jet_event);
 
     ADDBRANCH(event_px);
     ADDBRANCH(event_py);
@@ -86,6 +98,15 @@ void EvenTFeatures::CleanFeatures() {
     part_isMuon.clear();
     part_slimjetid.clear();
     part_fatjetid.clear();
+    part_dPhi_particle_jet.clear();
+ //   part_dPhi_particle_event.clear();
+    part_dEta_particle_jet.clear();
+    part_dEta_particle_event.clear();
+    part_ptrel_particle_jet.clear();
+    part_ptrel_particle_event.clear();
+    part_erel_particle_event.clear();
+    part_erel_particle_jet.clear();
+   
 
     jet_px.clear();
     jet_py.clear();
@@ -105,6 +126,11 @@ void EvenTFeatures::CleanFeatures() {
     jet_tau3.clear();
     jet_tau4.clear();
     jet_antikt_dR.clear();
+    jet_dEta_jet_event.clear();
+    jet_ptrel_jet_event.clear();
+ //   jet_dPhi_jet_event.clear();
+    
+    
 
     event_px = 0;
     event_py = 0;
@@ -112,7 +138,9 @@ void EvenTFeatures::CleanFeatures() {
     event_energy = 0;
     event_pt = 0;
     event_eta = 0;
+   // event_eta.clear();
     event_phi = 0;
+   // event_phi.clear();
     event_nparticles = 0;
     event_njets = 0;
 
