@@ -48,8 +48,8 @@ void EFlowEvent::FillTree() {
         part_d0err.push_back(part_info.get_d0err());
         part_dzval.push_back(part_info.get_dz());
         part_dzerr.push_back(part_info.get_dzerr());
-      //  part_dEta_particle_event.push_back(part.eta() - p_event.Eta());
-      //  part_dPhi_particle_event.push_back(part.delta_phi_to(p_event.Phi()));
+        //  part_dEta_particle_event.push_back(part.eta() - p_event.Eta());
+        //  part_dPhi_particle_event.push_back(part.delta_phi_to(p_event.Phi()));
         int pid = part_info.get_pid();
         int charge = part_info.get_charge();
         int isChargedHadron = 0;
@@ -112,8 +112,8 @@ void EFlowEvent::FillTree() {
             auto jet_particles = jet.constituents();
             jet_nparticles.push_back(jet_particles.size());
             jet_dEta_jet_event.push_back(jet.eta() - event_eta);
-            jet_ptrel_jet_event.push_back(jet.pt()/event_pt);
-          //  jet_dPhi_jet_event.push_back(jet.delta_phi_to(p_event));
+            jet_ptrel_jet_event.push_back(jet.pt() / event_pt);
+            //  jet_dPhi_jet_event.push_back(jet.delta_phi_to(p_event));
             int jet_ncharged_tmp = 0;
             int jet_nneutral_tmp = 0;
             double jet_E_charged = 0;
@@ -125,8 +125,8 @@ void EFlowEvent::FillTree() {
                 int part_charge_tmp = part_info.get_charge();
                 part_dPhi_particle_jet.push_back(part.delta_phi_to(jet));
                 part_dEta_particle_jet.push_back(part.eta() - jet.eta());
-                part_ptrel_particle_jet.push_back(part.pt()/jet.pt());
-                part_erel_particle_jet.push_back(part.e()/jet.e());
+                part_ptrel_particle_jet.push_back(part.pt() / jet.pt());
+                part_erel_particle_jet.push_back(part.e() / jet.e());
                 if (part_charge_tmp != 0) {
                     jet_ncharged_tmp += 1;
                     jet_E_charged += part_energy_tmp;
@@ -163,11 +163,10 @@ void EFlowEvent::FillTree() {
     for (size_t i = 0; i < objs.size(); i++) {
         auto &part = objs[i];
         part_dEta_particle_event.push_back(part.eta() - p_event.Eta());
-        part_ptrel_particle_event.push_back(part.pt()/p_event.Pt());
-        part_ptrel_particle_event.push_back(part.e()/event_energy);
-       // part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
+        part_ptrel_particle_event.push_back(part.pt() / p_event.Pt());
+        part_ptrel_particle_event.push_back(part.e() / event_energy);
+        // part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
     }
-    
 
     // * For the label
     SetEvenTLabel(m_label);
