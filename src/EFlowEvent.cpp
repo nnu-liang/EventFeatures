@@ -95,6 +95,8 @@ void EFlowEvent::FillTree() {
     // * Reconstruct jets
     int jet_id_tmp = 0;
     double dR[2] = {m_dR_slim, m_dR_fat};
+    std::vector<fastjet::PseudoJet> slimjets;
+    std::vector<fastjet::PseudoJet> fatjets;
     for (size_t iR = 0; iR < 2; iR++) {
         JetAlgorithmParameters param(dR[iR], m_pt_min, m_beta, m_beta_softdrop, m_symmetry_cut_softdrop, m_R0_softdrop);
         JetBuilder builder(param);
@@ -154,10 +156,31 @@ void EFlowEvent::FillTree() {
             jet_tau3.push_back(builder.Subjettiness(3, jet));
             jet_tau4.push_back(builder.Subjettiness(4, jet));
             jet_antikt_dR.push_back(dR[iR]);
+            if (iR == 0) {
+                slimjets.push_back(jet);
+            } else {
+                fatjets.push_back(jet);
+            }
             jet_id_tmp += 1;
         }
     }
-
+  
+for (const auto& slimjet : slimjets) {
+    for (const auto& fatjet : fatjets) {
+        double dEta_slim_fat = slimjet.eta() - fatjet.eta();
+        jet_dEta_slimjet_fatjet.push_back(dEta_slim_fat);
+        double pt_ratio_slim_fat = slimjet.pt() / fatjet.pt();
+        jet_ptrel_slimjet_fatjet.push_back(pt_ratio_slim_fat);
+        double energy_ratio_slim_fat = slimjet.e() / fatjet.e();
+        jet_erel_slimjet_fatjet.push_back(energy_ratio_slim_fat);
+        double dPhi_slim_fat = slimjet.delta_phi_to(fatjet);
+        jet_dPhi_slimjet_fatjet.push_back(dPhi_slim_fat);
+    }
+}
+ double slim_fat_count_ratio = 0.0;
+ if (!fatjets.empty()) {
+     jet_ration_nslimjet_nfatjet = static_cast<double>(slimjets.size()) / fatjets.size();
+ }
     // * For the whole event
     //TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
     event_pt = p_event.Pt();

@@ -59,6 +59,11 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(jet_dEta_two_jets);
     ADDBRANCH(jet_dPhi_two_jets);
     ADDBRANCH(jet_dPhi_jet_event);
+    ADDBRANCH(jet_dEta_slimjet_fatjet);
+    ADDBRANCH(jet_ration_nslimjet_nfatjet);
+    ADDBRANCH(jet_ptrel_slimjet_fatjet);
+    ADDBRANCH(jet_erel_slimjet_fatjet);
+    ADDBRANCH(jet_dPhi_slimjet_fatjet);
 
 
     ADDBRANCH(event_px);
@@ -137,6 +142,11 @@ void EvenTFeatures::CleanFeatures() {
     jet_dEta_two_jets.clear();
     jet_dPhi_two_jets.clear();
     jet_dPhi_jet_event.clear();
+    jet_dEta_slimjet_fatjet.clear();
+    jet_ptrel_slimjet_fatjet.clear();
+    jet_erel_slimjet_fatjet.clear();
+    jet_dPhi_slimjet_fatjet.clear();
+    
 
 
     event_px = 0;
@@ -148,6 +158,7 @@ void EvenTFeatures::CleanFeatures() {
     event_phi = 0;
     event_nparticles = 0;
     event_njets = 0;
+    jet_ration_nslimjet_nfatjet = 0;
 
     label_hh_4b = false;
     label_tt_2b4j = false;

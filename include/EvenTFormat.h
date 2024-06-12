@@ -76,6 +76,10 @@ public:
     vf_t jet_dEta_two_jets;
     vf_t jet_dPhi_two_jets;
     vf_t jet_dPhi_jet_event;
+    vf_t jet_dEta_slimjet_fatjet;
+    vf_t jet_ptrel_slimjet_fatjet;
+    vf_t jet_erel_slimjet_fatjet;
+    vf_t jet_dPhi_slimjet_fatjet;
 
     float event_px;
     float event_py;
@@ -84,6 +88,7 @@ public:
     float event_pt;
     float event_eta;
     float event_phi;
+    float jet_ration_nslimjet_nfatjet;
     int32_t event_nparticles;
     int32_t event_njets;
 
@@ -159,6 +164,12 @@ private:
     TBranch *m_b_jet_dEta_two_jets;
     TBranch *m_b_jet_dPhi_two_jets;
     TBranch *m_b_jet_dPhi_jet_event;
+    TBranch *m_b_jet_dEta_slimjet_fatjet;
+    TBranch *m_b_jet_ration_nslimjet_nfatjet;
+    TBranch *m_b_jet_ptrel_slimjet_fatjet;
+    TBranch *m_b_jet_erel_slimjet_fatjet;
+    TBranch *m_b_jet_dPhi_slimjet_fatjet;
+    
 
     TBranch *m_b_event_px;
     TBranch *m_b_event_py;
