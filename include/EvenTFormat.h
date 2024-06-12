@@ -6,7 +6,7 @@
 class TTree;
 class TBranch;
 
-enum EvenTLABEL { l_Pred = -1, l_hh_4b = 0, l_tth_4b4j = 1, l_ttbb_4b4j = 2, l_hbb_4b = 3, l_4b = 4, l_2b2j = 5 };
+enum EvenTLABEL { l_Pred = -1, l_hh_4b = 0, l_tth_4b4j = 1, l_ttbb_4b4j = 2, l_hbb_4b = 3, l_4b = 4, l_2b2j = 5, l_tt_2b4j = 6, l_zz_4b = 7, l_zh_4b =8 };
 
 class EvenTFeatures {
 public:
@@ -58,6 +58,7 @@ public:
     vf_t jet_energy;
     vf_t jet_pt;
     vf_t jet_eta;
+   // vf_t jet_eta2;
     vf_t jet_phi;
     vf_t jet_sdmass;
     vi_t jet_nparticles;
@@ -72,7 +73,10 @@ public:
     vf_t jet_antikt_dR;
     vf_t jet_dEta_jet_event;
     vf_t jet_ptrel_jet_event;
-   // vf_t jet_dPhi_jet_event;
+    vf_t jet_erel_jet_event;
+    vf_t jet_dEta_two_jets;
+    vf_t jet_dPhi_two_jets;
+    vf_t jet_dPhi_jet_event;
 
     float event_px;
     float event_py;
@@ -85,11 +89,14 @@ public:
     int32_t event_njets;
 
     bool label_hh_4b;
+    bool label_tt_2b4j;
     bool label_tth_4b4j;
     bool label_ttbb_4b4j;
     bool label_hbb_4b;
     bool label_4b;
     bool label_2b2j;
+    bool label_zz_4b;
+    bool label_zh_4b;
 
     virtual void SetUpBranches(TTree *t);
     virtual void FillTree() = 0;
@@ -121,7 +128,7 @@ private:
     TBranch *m_b_part_slimjetid;
     TBranch *m_b_part_fatjetid;
     TBranch *m_b_part_dPhi_particle_jet;
- //   TBranch *m_b_part_dPhi_particle_event;
+    TBranch *m_b_part_dPhi_particle_event;
     TBranch *m_b_part_dEta_particle_jet;
     TBranch *m_b_part_dEta_particle_event;
     TBranch *m_b_part_ptrel_particle_jet;
@@ -149,7 +156,10 @@ private:
     TBranch *m_b_jet_antikt_dR;
     TBranch *m_b_jet_dEta_jet_event;
     TBranch *m_b_jet_ptrel_jet_event;
-  //  TBranch *m_b_jet_dPhi_jet_event;
+    TBranch *m_b_jet_erel_jet_event;
+    TBranch *m_b_jet_dEta_two_jets;
+    TBranch *m_b_jet_dPhi_two_jets;
+    TBranch *m_b_jet_dPhi_jet_event;
 
     TBranch *m_b_event_px;
     TBranch *m_b_event_py;
@@ -162,11 +172,14 @@ private:
     TBranch *m_b_event_njets;
 
     TBranch *m_b_label_hh_4b;
+    TBranch *m_b_label_tt_2b4j;
     TBranch *m_b_label_tth_4b4j;
     TBranch *m_b_label_ttbb_4b4j;
     TBranch *m_b_label_hbb_4b;
     TBranch *m_b_label_4b;
     TBranch *m_b_label_2b2j;
+    TBranch *m_b_label_zz_4b;
+    TBranch *m_b_label_zh_4b;
 };
 
 #endif  // EVENT_FORMAT_H_

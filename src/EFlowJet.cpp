@@ -57,7 +57,7 @@ void EFlowJet::FillTree(int event_id) {
         fastjet::PseudoJet &jet = m_jets[i_jet];
         if (m_label != l_Pred && fabs(jet.eta()) > m_eta_abs_max)
             continue;  // ! Only cut if we do not prepare the data for prediction;
-        if (m_label != l_Pred && jet.pt() > m_pt_max) continue;
+        if (m_label != l_Pred && jet.pt() > m_pt_max || jet.pt() < m_pt_min) continue;
         std::vector<fastjet::PseudoJet> jet_particles = jet.constituents();
         jet_pt = jet.pt();
         jet_eta = jet.eta();

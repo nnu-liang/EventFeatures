@@ -23,6 +23,7 @@ EFlowEvent::EFlowEvent(EvenTLABEL label, ExRootTreeReader *reader) : EFlowObjs(r
 void EFlowEvent::FillTree() {
     CleanFeatures();
     // * variables that stores the whole event info
+    TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
     event_px = 0;
     event_py = 0;
     event_pz = 0;
@@ -108,11 +109,18 @@ void EFlowEvent::FillTree() {
             jet_energy.push_back(jet.e());
             jet_pt.push_back(jet.pt());
             jet_eta.push_back(jet.eta());
+            if (i < jets.size() - 1){
+                for (size_t j = i+1; j < jets.size(); j++) {
+                    fastjet::PseudoJet &jet2 = jets[j];
+                    jet_dEta_two_jets.push_back(jet.eta() - jet2.eta());
+                    jet_dPhi_two_jets.push_back(jet.delta_phi_to(jet2));}}
             jet_phi.push_back(jet.phi());
             auto jet_particles = jet.constituents();
             jet_nparticles.push_back(jet_particles.size());
             jet_dEta_jet_event.push_back(jet.eta() - event_eta);
+            jet_dPhi_jet_event.push_back(jet.delta_phi_to(p_event));
             jet_ptrel_jet_event.push_back(jet.pt()/event_pt);
+            jet_erel_jet_event.push_back(jet.e()/event_energy);
           //  jet_dPhi_jet_event.push_back(jet.delta_phi_to(p_event));
             int jet_ncharged_tmp = 0;
             int jet_nneutral_tmp = 0;
@@ -154,7 +162,7 @@ void EFlowEvent::FillTree() {
     }
 
     // * For the whole event
-    TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
+    //TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
     event_pt = p_event.Pt();
     event_eta = p_event.Eta();
     event_phi = p_event.Phi();
@@ -164,8 +172,8 @@ void EFlowEvent::FillTree() {
         auto &part = objs[i];
         part_dEta_particle_event.push_back(part.eta() - p_event.Eta());
         part_ptrel_particle_event.push_back(part.pt()/p_event.Pt());
-        part_ptrel_particle_event.push_back(part.e()/event_energy);
-       // part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
+        part_erel_particle_event.push_back(part.e()/event_energy);
+        part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
     }
     
 

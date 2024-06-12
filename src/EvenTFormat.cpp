@@ -27,7 +27,7 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(part_slimjetid);
     ADDBRANCH(part_fatjetid);
     ADDBRANCH(part_dPhi_particle_jet);
-  //  ADDBRANCH(part_dPhi_particle_event);
+    ADDBRANCH(part_dPhi_particle_event);
     ADDBRANCH(part_dEta_particle_jet);
     ADDBRANCH(part_ptrel_particle_jet);
     ADDBRANCH(part_erel_particle_jet);
@@ -56,7 +56,10 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(jet_antikt_dR);
     ADDBRANCH(jet_dEta_jet_event);
     ADDBRANCH(jet_ptrel_jet_event);
-  //  ADDBRANCH(jet_dPhi_jet_event);
+    ADDBRANCH(jet_erel_jet_event);
+    ADDBRANCH(jet_dEta_two_jets);
+    ADDBRANCH(jet_dPhi_two_jets);
+    ADDBRANCH(jet_dPhi_jet_event);
 
     ADDBRANCH(event_px);
     ADDBRANCH(event_py);
@@ -69,11 +72,14 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(event_njets);
 
     ADDBRANCH(label_hh_4b);
+    ADDBRANCH(label_tt_2b4j);
     ADDBRANCH(label_tth_4b4j);
     ADDBRANCH(label_ttbb_4b4j);
     ADDBRANCH(label_hbb_4b);
     ADDBRANCH(label_4b);
     ADDBRANCH(label_2b2j);
+    ADDBRANCH(label_zz_4b);
+    ADDBRANCH(label_zh_4b);
 }
 
 void EvenTFeatures::FillBranches() { m_tree->Fill(); }
@@ -99,7 +105,7 @@ void EvenTFeatures::CleanFeatures() {
     part_slimjetid.clear();
     part_fatjetid.clear();
     part_dPhi_particle_jet.clear();
- //   part_dPhi_particle_event.clear();
+    part_dPhi_particle_event.clear();
     part_dEta_particle_jet.clear();
     part_dEta_particle_event.clear();
     part_ptrel_particle_jet.clear();
@@ -114,6 +120,7 @@ void EvenTFeatures::CleanFeatures() {
     jet_energy.clear();
     jet_pt.clear();
     jet_eta.clear();
+  //  jet_eta2.clear();
     jet_phi.clear();
     jet_sdmass.clear();
     jet_nparticles.clear();
@@ -128,7 +135,10 @@ void EvenTFeatures::CleanFeatures() {
     jet_antikt_dR.clear();
     jet_dEta_jet_event.clear();
     jet_ptrel_jet_event.clear();
- //   jet_dPhi_jet_event.clear();
+    jet_erel_jet_event.clear();
+    jet_dEta_two_jets.clear();
+    jet_dPhi_two_jets.clear();
+    jet_dPhi_jet_event.clear();
     
     
 
@@ -145,23 +155,32 @@ void EvenTFeatures::CleanFeatures() {
     event_njets = 0;
 
     label_hh_4b = false;
+    label_tt_2b4j = false;
     label_tth_4b4j = false;
     label_ttbb_4b4j = false;
     label_hbb_4b = false;
     label_4b = false;
     label_2b2j = false;
+    label_zz_4b = false;
+    label_zh_4b = false;
 }
 
 void EvenTFeatures::SetEvenTLabel(const EvenTLABEL label) {
     label_hh_4b = false;
+    label_tt_2b4j = false;
     label_tth_4b4j = false;
     label_ttbb_4b4j = false;
     label_hbb_4b = false;
     label_4b = false;
     label_2b2j = false;
+    label_zz_4b = false;
+    label_zh_4b = false;
     switch (label) {
         case l_hh_4b:
             label_hh_4b = true;
+            return;
+        case l_tt_2b4j:
+            label_tth_4b4j = true;
             return;
         case l_tth_4b4j:
             label_tth_4b4j = true;
@@ -177,6 +196,12 @@ void EvenTFeatures::SetEvenTLabel(const EvenTLABEL label) {
             return;
         case l_2b2j:
             label_2b2j = true;
+            return;
+        case l_zz_4b:
+            label_zz_4b = true;
+            return;
+        case l_zh_4b:
+            label_zh_4b = true;
             return;
         case l_Pred:
         default:
