@@ -1,8 +1,8 @@
 #ifndef EVENT_FORMAT_H_
 #define EVENT_FORMAT_H_
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 class TTree;
 class TBranch;
 
@@ -58,7 +58,6 @@ public:
     vf_t jet_energy;
     vf_t jet_pt;
     vf_t jet_eta;
-   // vf_t jet_eta2;
     vf_t jet_phi;
     vf_t jet_sdmass;
     vi_t jet_nparticles;
