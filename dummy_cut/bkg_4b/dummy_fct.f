@@ -4,7 +4,7 @@
       REAL*8 P(0:3,nexternal)
       real, dimension(0:3) :: b1, b2, b3, b4
       real :: px1, py1, Pt1, px2, py2, Pt2, px3, py3, Pt3, px4, py4, Pt4
-  
+      dummy_cuts = .true.
       b1 = P(:, 3) 
       b2 = P(:, 4)
       b3 = P(:, 5)

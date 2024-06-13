@@ -5,7 +5,7 @@
       real, dimension(0:3) :: b, u, antid, b1, b2
       real, dimension(0:3) :: antib, antiu, d
       real :: px1, py1, Pt1, px2, py2, Pt2, px3, py3, Pt3
-  
+      dummy_cuts = .true.
       b = P(:, 3) 
       u = P(:, 4)
       antid = P(:, 5)
