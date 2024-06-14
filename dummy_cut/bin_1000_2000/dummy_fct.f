@@ -2,34 +2,26 @@
       implicit none
       include 'nexternal.inc'
       REAL*8 P(0:3,nexternal)
-      real, dimension(0:3) :: b1, b2, b3, b4
-      real :: px1, py1, Pt1, px2, py2, Pt2, px3, py3, Pt3, px4, py4, Pt4
-      b1 = P(:, 3) 
-      b2 = P(:, 4)
-      b3 = P(:, 5)
-      b4 = P(:, 6)
-      
-      px1 = b1(1)
-      py1 = b1(2)
-      px4 = b2(1)
-      py4 = b2(2)
-      px2 = b3(1) 
-      py2 = b3(2)
-      px3 = b4(1)
-      py3 = b4(2)
+      real*8 :: E1, px1, py1, pz1, E2, px2, py2, pz2, sqrt_s
 
-      Pt1 = sqrt( px1**2 + py1**2 )
-      Pt2 = sqrt( px2**2 + py2**2 )
-      Pt3 = sqrt( px3**2 + py3**2 )
-      Pt4 = sqrt( px4**2 + py4**2 ) 
       dummy_cuts = .true.
-      if (Pt1 <= 400.0 .or. Pt1 >= 1200.0) dummy_cuts = .false.
-      if (Pt2 <= 400.0 .or. Pt2 >= 1200.0) dummy_cuts = .false.
-      if (Pt3 <= 400.0 .or. Pt3 >= 1200.0) dummy_cuts = .false.
-      if (Pt4 <= 400.0 .or. Pt4 >= 1200.0) dummy_cuts = .false.
+
+      E1 = P(0, 1)
+      px1 = P(1, 1)
+      py1 = P(2, 1)
+      pz1 = P(3, 1)
+      
+      E2 = P(0, 2)
+      px2 = P(1, 2)
+      py2 = P(2, 2)
+      pz2 = P(3, 2)
+
+      sqrt_s = sqrt((E1 + E2)**2 - ((px1 + px2)**2 + (py1 + py2)**2 + (pz1 + pz2)**2))
+
+      if (sqrt_s < 1000 .or. sqrt_s > 2000) dummy_cuts = .false.
+      
       return
       end
-
 
       subroutine get_dummy_x1(sjac, X1, R, pbeam1, pbeam2, stot, shat)
       implicit none
