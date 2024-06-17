@@ -186,7 +186,7 @@ void EvenTFeatures::SetEvenTLabel(const EvenTLABEL label) {
             label_hh_4b = true;
             return;
         case l_tt_2b4j:
-            label_tth_4b4j = true;
+            label_tt_2b4j = true;
             return;
         case l_tth_4b4j:
             label_tth_4b4j = true;
