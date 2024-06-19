@@ -18,7 +18,7 @@
 
       sqrt_s = sqrt((E1 + E2)**2 - ((px1 + px2)**2 + (py1 + py2)**2 + (pz1 + pz2)**2))
 
-      if (sqrt_s < 254.92 .or. sqrt_s > 338.43) dummy_cuts = .false.
+      if (sqrt_s < 349.19 .or. sqrt_s > 463.08) dummy_cuts = .false.
       
       return
       end
