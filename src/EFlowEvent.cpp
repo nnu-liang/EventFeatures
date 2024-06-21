@@ -114,8 +114,8 @@ void EFlowEvent::FillTree() {
             jet_nparticles.push_back(jet_particles.size());
             jet_dEta_jet_event.push_back(jet.eta() - event_eta);
             jet_dPhi_jet_event.push_back(jet.delta_phi_to(p_event));
-            jet_ptrel_jet_event.push_back(jet.pt()/event_pt);
-            jet_erel_jet_event.push_back(jet.e()/event_energy);
+            jet_ptrel_jet_event.push_back(jet.pt() / event_pt);
+            jet_erel_jet_event.push_back(jet.e() / event_energy);
             int jet_ncharged_tmp = 0;
             int jet_nneutral_tmp = 0;
             double jet_E_charged = 0;
@@ -161,7 +161,7 @@ void EFlowEvent::FillTree() {
      jet_ration_nslimjet_nfatjet = static_cast<double>(slimjets.size()) / fatjets.size();
  }
     // * For the whole event
-    //TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
+    // TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
     event_pt = p_event.Pt();
     event_eta = p_event.Eta();
     event_phi = p_event.Phi();
@@ -170,8 +170,8 @@ void EFlowEvent::FillTree() {
     for (size_t i = 0; i < objs.size(); i++) {
         auto &part = objs[i];
         part_dEta_particle_event.push_back(part.eta() - p_event.Eta());
-        part_ptrel_particle_event.push_back(part.pt()/p_event.Pt());
-        part_erel_particle_event.push_back(part.e()/event_energy);
+        part_ptrel_particle_event.push_back(part.pt() / p_event.Pt());
+        part_erel_particle_event.push_back(part.e() / event_energy);
         part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
     }
     
