@@ -1,5 +1,5 @@
 #include "EFlowEvent.h"
-
+#include <cmath>
 #include "ConfigParser.h"
 #include "FastJetWraper.h"
 
@@ -109,11 +109,6 @@ void EFlowEvent::FillTree() {
             jet_energy.push_back(jet.e());
             jet_pt.push_back(jet.pt());
             jet_eta.push_back(jet.eta());
-            if (i < jets.size() - 1){
-                for (size_t j = i+1; j < jets.size(); j++) {
-                    fastjet::PseudoJet &jet2 = jets[j];
-                    jet_dEta_two_jets.push_back(jet.eta() - jet2.eta());
-                    jet_dPhi_two_jets.push_back(jet.delta_phi_to(jet2));}}
             jet_phi.push_back(jet.phi());
             auto jet_particles = jet.constituents();
             jet_nparticles.push_back(jet_particles.size());
@@ -130,10 +125,6 @@ void EFlowEvent::FillTree() {
                 auto part_info = part.user_info<ParticleExtraInfo>();
                 double part_energy_tmp = part.e();
                 int part_charge_tmp = part_info.get_charge();
-                part_dPhi_particle_jet.push_back(part.delta_phi_to(jet));
-                part_dEta_particle_jet.push_back(part.eta() - jet.eta());
-                part_ptrel_particle_jet.push_back(part.pt() / jet.pt());
-                part_erel_particle_jet.push_back(part.e() / jet.e());
                 if (part_charge_tmp != 0) {
                     jet_ncharged_tmp += 1;
                     jet_E_charged += part_energy_tmp;
@@ -165,18 +156,6 @@ void EFlowEvent::FillTree() {
         }
     }
   
-for (const auto& slimjet : slimjets) {
-    for (const auto& fatjet : fatjets) {
-        double dEta_slim_fat = slimjet.eta() - fatjet.eta();
-        jet_dEta_slimjet_fatjet.push_back(dEta_slim_fat);
-        double pt_ratio_slim_fat = slimjet.pt() / fatjet.pt();
-        jet_ptrel_slimjet_fatjet.push_back(pt_ratio_slim_fat);
-        double energy_ratio_slim_fat = slimjet.e() / fatjet.e();
-        jet_erel_slimjet_fatjet.push_back(energy_ratio_slim_fat);
-        double dPhi_slim_fat = slimjet.delta_phi_to(fatjet);
-        jet_dPhi_slimjet_fatjet.push_back(dPhi_slim_fat);
-    }
-}
  double slim_fat_count_ratio = 0.0;
  if (!fatjets.empty()) {
      jet_ration_nslimjet_nfatjet = static_cast<double>(slimjets.size()) / fatjets.size();
@@ -195,6 +174,91 @@ for (const auto& slimjet : slimjets) {
         part_erel_particle_event.push_back(part.e()/event_energy);
         part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
     }
+    
+auto deltaPhi = [](double phi1, double phi2) {
+    double dphi = phi1 - phi2;
+    while (dphi > M_PI) dphi -= 2 * M_PI;
+    while (dphi < -M_PI) dphi += 2 * M_PI;
+    return dphi;
+};
+
+for (size_t j = 0; j < part_eta.size(); ++j) {
+    int curr_slimjet_id = part_slimjetid[j];
+    if (curr_slimjet_id == -1) {
+        part_dEta_particle_jet.push_back(0);
+        part_dPhi_particle_jet.push_back(0);
+        part_ptrel_particle_jet.push_back(0);
+        part_erel_particle_jet.push_back(0);
+    } else {
+        part_dEta_particle_jet.push_back(part_eta[j] - jet_eta[curr_slimjet_id]);
+        double dphi = deltaPhi(part_phi[j], jet_phi[curr_slimjet_id]);
+        part_dPhi_particle_jet.push_back(dphi);
+        part_ptrel_particle_jet.push_back(part_pt[j]/jet_pt[curr_slimjet_id]);
+        part_erel_particle_jet.push_back(part_energy[j]/jet_energy[curr_slimjet_id]);
+    }
+
+    int curr_fatjet_id = part_fatjetid[j];
+    if (curr_fatjet_id == -1) {
+        part_dEta_particle_jet.push_back(0);
+        part_dPhi_particle_jet.push_back(0);
+        part_ptrel_particle_jet.push_back(0);
+        part_erel_particle_jet.push_back(0);
+    } else {
+        part_dEta_particle_jet.push_back(part_eta[j] - jet_eta[curr_fatjet_id]);
+        double dphi = deltaPhi(part_phi[j], jet_phi[curr_fatjet_id]);
+        part_dPhi_particle_jet.push_back(dphi);
+        part_ptrel_particle_jet.push_back(part_pt[j]/jet_pt[curr_fatjet_id]);
+        part_erel_particle_jet.push_back(part_energy[j]/jet_energy[curr_fatjet_id]);
+    }
+} 
+
+for (size_t j = 1; j < jet_eta.size(); ++j) {
+    for (size_t i = 0; i < j; ++i) {
+        jet_dEta_two_jets.push_back(jet_eta[i] - jet_eta[j]);
+    }
+}
+
+for (size_t j = 1; j < jet_phi.size(); ++j) {
+    for (size_t i = 0; i < j; ++i) {
+        double dphi = deltaPhi(jet_phi[i], jet_phi[j]);
+        jet_dPhi_two_jets.push_back(dphi);
+    }
+}
+
+for (const auto& fatjet : fatjets) {
+    fatjet_eta.push_back(fatjet.eta());
+    fatjet_phi.push_back(fatjet.phi());
+    fatjet_energy.push_back(fatjet.energy());
+    fatjet_pt.push_back(fatjet.pt());
+    auto fatjet_particles = fatjet.constituents();
+    fatjet_nparticles.push_back(jet_particles.size());
+}
+
+for (const auto& slimjet : slimjets) {
+    slimjet_eta.push_back(slimjet.eta()); 
+    slimjet_phi.push_back(slimjet.eta());
+    slimjet_energy.push_back(slimjet.eta());
+    slimjet_pt.push_back(slimjet.eta());
+    auto slimjet_particles = slimjet.constituents();
+    slimjet_nparticles.push_back(jet_particles.size());
+
+}
+
+for (size_t i = 0; i < 16; ++i) {
+    for (size_t j = 0; j < 16; ++j) {
+        if (i >= slimjet_eta.size() || j >= fatjet_eta.size()) {
+            jet_dEta_slimjet_fatjet.push_back(0);
+            jet_dPhi_slimjet_fatjet.push_back(0);
+            jet_ptrel_slimjet_fatjet.push_back(0);
+            jet_erel_slimjet_fatjet.push_back(0);
+        } else {
+            jet_dEta_slimjet_fatjet.push_back(slimjet_eta[i] - fatjet_eta[j]);
+            jet_dPhi_slimjet_fatjet.push_back(deltaPhi(slimjet_phi[i], fatjet_phi[j]));
+            jet_ptrel_slimjet_fatjet.push_back(slimjet_pt[i]/fatjet_pt[j]);
+            jet_erel_slimjet_fatjet.push_back(slimjet_energy[i]/fatjet_energy[j]);
+        }
+    }
+}
 
     // * For the label
     SetEvenTLabel(m_label);

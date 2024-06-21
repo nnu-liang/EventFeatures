@@ -64,6 +64,8 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(jet_ptrel_slimjet_fatjet);
     ADDBRANCH(jet_erel_slimjet_fatjet);
     ADDBRANCH(jet_dPhi_slimjet_fatjet);
+    ADDBRANCH(slimjet_eta);
+    ADDBRANCH(fatjet_eta);
 
 
     ADDBRANCH(event_px);
@@ -146,6 +148,9 @@ void EvenTFeatures::CleanFeatures() {
     jet_ptrel_slimjet_fatjet.clear();
     jet_erel_slimjet_fatjet.clear();
     jet_dPhi_slimjet_fatjet.clear();
+    slimjet_eta.clear();
+    fatjet_eta.clear();
+    
     
 
 
