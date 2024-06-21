@@ -80,6 +80,15 @@ public:
     vf_t jet_ptrel_slimjet_fatjet;
     vf_t jet_erel_slimjet_fatjet;
     vf_t jet_dPhi_slimjet_fatjet;
+    vf_t slimjet_eta;
+    vf_t slimjet_phi;
+    vf_t slimjet_energy;
+    vf_t slimjet_pt;
+    vf_t fatjet_eta;
+    vf_t fatjet_phi;
+    vf_t fatjet_energy;
+    vf_t fatjet_pt;
+    
 
     float event_px;
     float event_py;
@@ -169,6 +178,8 @@ private:
     TBranch *m_b_jet_ptrel_slimjet_fatjet;
     TBranch *m_b_jet_erel_slimjet_fatjet;
     TBranch *m_b_jet_dPhi_slimjet_fatjet;
+    TBranch *m_b_slimjet_eta;
+    TBranch *m_b_fatjet_eta;
     
 
     TBranch *m_b_event_px;

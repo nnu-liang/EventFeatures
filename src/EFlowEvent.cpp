@@ -228,19 +228,19 @@ for (size_t j = 1; j < jet_phi.size(); ++j) {
 for (const auto& fatjet : fatjets) {
     fatjet_eta.push_back(fatjet.eta());
     fatjet_phi.push_back(fatjet.phi());
-    fatjet_energy.push_back(fatjet.energy());
+    fatjet_energy.push_back(fatjet.e());
     fatjet_pt.push_back(fatjet.pt());
-    auto fatjet_particles = fatjet.constituents();
-    fatjet_nparticles.push_back(jet_particles.size());
+  //  auto fatjet_particles = fatjet.constituents();
+  //  fatjet_nparticles.push_back(jet_particles.size());
 }
 
 for (const auto& slimjet : slimjets) {
     slimjet_eta.push_back(slimjet.eta()); 
-    slimjet_phi.push_back(slimjet.eta());
-    slimjet_energy.push_back(slimjet.eta());
-    slimjet_pt.push_back(slimjet.eta());
-    auto slimjet_particles = slimjet.constituents();
-    slimjet_nparticles.push_back(jet_particles.size());
+    slimjet_phi.push_back(slimjet.phi());
+    slimjet_energy.push_back(slimjet.e());
+    slimjet_pt.push_back(slimjet.pt());
+  //  auto slimjet_particles = slimjet.constituents();
+  //  slimjet_nparticles.push_back(jet_particles.size());
 
 }
 
