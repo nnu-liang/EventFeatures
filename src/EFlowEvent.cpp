@@ -201,8 +201,8 @@ for (size_t j = 0; j < part_eta.size(); ++j) {
     if (curr_fatjet_id == -1) {
         part_dEta_particle_jet.push_back(0);
         part_dPhi_particle_jet.push_back(0);
-        part_ptrel_particle_jet.push_back(0);
-        part_erel_particle_jet.push_back(0);
+        part_ptrel_particle_jet.push_back(1);
+        part_erel_particle_jet.push_back(1);
     } else {
         part_dEta_particle_jet.push_back(part_eta[j] - jet_eta[curr_fatjet_id]);
         double dphi = deltaPhi(part_phi[j], jet_phi[curr_fatjet_id]);
