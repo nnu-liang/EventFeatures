@@ -150,20 +150,17 @@ void EvenTFeatures::CleanFeatures() {
     jet_dPhi_slimjet_fatjet.clear();
     slimjet_eta.clear();
     fatjet_eta.clear();
-    
-    
-
-
-    event_px = 0;
-    event_py = 0;
-    event_pz = 0;
-    event_energy = 0;
-    event_pt = 0;
-    event_eta = 0;
-    event_phi = 0;
-    event_nparticles = 0;
-    event_njets = 0;
-    jet_ration_nslimjet_nfatjet = 0;
+    event_px.clear();
+    event_px.clear();
+    event_py.clear();
+    event_pz.clear();
+    event_energy.clear();
+    event_pt.clear();
+    event_eta.clear();
+    event_phi.clear();
+    event_nparticles.clear();
+    event_njets.clear();
+    jet_ration_nslimjet_nfatjet.clear();
 
     label_hh_4b = false;
     label_tt_2b4j = false;

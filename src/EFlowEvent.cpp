@@ -20,22 +20,27 @@ EFlowEvent::EFlowEvent(EvenTLABEL label, ExRootTreeReader *reader) : EFlowObjs(r
     // m_fat_jet_builder = new JetBuilder(param_fat);
 }
 
+float event_px_tmp;
+float event_py_tmp;
+float event_pz_tmp;
+float event_energy_tmp;
+
 void EFlowEvent::FillTree() {
     CleanFeatures();
     // * variables that stores the whole event info
-    TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
-    event_px = 0;
-    event_py = 0;
-    event_pz = 0;
-    event_energy = 0;
+    TLorentzVector p_event(event_px_tmp, event_py_tmp, event_pz_tmp, event_energy_tmp);
+    event_px_tmp = 0;
+    event_py_tmp = 0;
+    event_pz_tmp = 0;
+    event_energy_tmp = 0;
     // * We first store the "particle" information
     EFlowObjs_t &objs = GetEFlowObjs();
     for (size_t i = 0; i < objs.size(); i++) {
         auto &part = objs[i];
-        event_px += part.px();
-        event_py += part.py();
-        event_pz += part.pz();
-        event_energy += part.e();
+        event_px_tmp += part.px();
+        event_py_tmp += part.py();
+        event_pz_tmp += part.pz();
+        event_energy_tmp += part.e();
         part_px.push_back(part.px());
         part_py.push_back(part.py());
         part_pz.push_back(part.pz());
@@ -112,10 +117,9 @@ void EFlowEvent::FillTree() {
             jet_phi.push_back(jet.phi());
             auto jet_particles = jet.constituents();
             jet_nparticles.push_back(jet_particles.size());
-            jet_dEta_jet_event.push_back(jet.eta() - event_eta);
+            jet_dEta_jet_event.push_back(jet.eta() - p_event.Eta());
             jet_dPhi_jet_event.push_back(jet.delta_phi_to(p_event));
-            jet_ptrel_jet_event.push_back(jet.pt() / event_pt);
-            jet_erel_jet_event.push_back(jet.e() / event_energy);
+            jet_erel_jet_event.push_back(jet.e() / event_energy_tmp);
             int jet_ncharged_tmp = 0;
             int jet_nneutral_tmp = 0;
             double jet_E_charged = 0;
@@ -156,25 +160,29 @@ void EFlowEvent::FillTree() {
         }
     }
   
- double slim_fat_count_ratio = 0.0;
  if (!fatjets.empty()) {
-     jet_ration_nslimjet_nfatjet = static_cast<double>(slimjets.size()) / fatjets.size();
+     jet_ration_nslimjet_nfatjet.push_back(static_cast<double>(slimjets.size()) / fatjets.size());
  }
     // * For the whole event
     // TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
-    event_pt = p_event.Pt();
-    event_eta = p_event.Eta();
-    event_phi = p_event.Phi();
-    event_nparticles = objs.size();
-    event_njets = jet_id_tmp;
+
     for (size_t i = 0; i < objs.size(); i++) {
         auto &part = objs[i];
         part_dEta_particle_event.push_back(part.eta() - p_event.Eta());
-        part_ptrel_particle_event.push_back(part.pt() / p_event.Pt());
-        part_erel_particle_event.push_back(part.e() / event_energy);
+        part_erel_particle_event.push_back(part.e() / event_energy_tmp);
         part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
     }
-    
+
+event_px.push_back(event_px_tmp);
+event_py.push_back(event_py_tmp);
+event_pz.push_back(event_pz_tmp);
+event_energy.push_back(event_energy_tmp);
+event_nparticles.push_back(objs.size());
+event_njets.push_back(jet_id_tmp);
+event_eta.push_back(p_event.Eta());
+event_phi.push_back(p_event.Phi());
+event_pt.push_back(p_event.Pt());
+
 auto deltaPhi = [](double phi1, double phi2) {
     double dphi = phi1 - phi2;
     while (dphi > M_PI) dphi -= 2 * M_PI;
