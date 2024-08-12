@@ -34,14 +34,18 @@ public:
     vi_t part_isPhoton;
     vi_t part_isElectron;
     vi_t part_isMuon;
-    vf_t part_dPhi_particle_jet;
+    vf_t part_dPhi_particle_slimjet;
+    vf_t part_dPhi_particle_fatjet;
     vf_t part_dPhi_particle_event;
-    vf_t part_dEta_particle_jet;
+    vf_t part_dEta_particle_slimjet;
+    vf_t part_dEta_particle_fatjet;
     vf_t part_dEta_particle_event;
-    vf_t part_ptrel_particle_jet;
+    vf_t part_ptrel_particle_slimjet;
+    vf_t part_ptrel_particle_fatjet;
     vf_t part_ptrel_particle_event;
     vf_t part_erel_particle_event;
-    vf_t part_erel_particle_jet;
+    vf_t part_erel_particle_slimjet;
+    vf_t part_erel_particle_fatjet;
 
     // * Temporaily using following variables to store the jet id;
     // * Actually one can use vector<vector<int>>,
@@ -150,14 +154,18 @@ private:
     TBranch *m_b_part_isMuon;
     TBranch *m_b_part_slimjetid;
     TBranch *m_b_part_fatjetid;
-    TBranch *m_b_part_dPhi_particle_jet;
+    TBranch *m_b_part_dPhi_particle_slimjet;
+    TBranch *m_b_part_dPhi_particle_fatjet;
     TBranch *m_b_part_dPhi_particle_event;
-    TBranch *m_b_part_dEta_particle_jet;
+    TBranch *m_b_part_dEta_particle_slimjet;
+    TBranch *m_b_part_dEta_particle_fatjet;
     TBranch *m_b_part_dEta_particle_event;
-    TBranch *m_b_part_ptrel_particle_jet;
+    TBranch *m_b_part_ptrel_particle_slimjet;
+    TBranch *m_b_part_ptrel_particle_fatjet;
     TBranch *m_b_part_ptrel_particle_event;
     TBranch *m_b_part_erel_particle_event;
-    TBranch *m_b_part_erel_particle_jet;
+    TBranch *m_b_part_erel_particle_slimjet;
+    TBranch *m_b_part_erel_particle_fatjet;
 
     TBranch *m_b_jet_px;
     TBranch *m_b_jet_py;

@@ -193,30 +193,30 @@ auto deltaPhi = [](double phi1, double phi2) {
 for (size_t j = 0; j < part_eta.size(); ++j) {
     int curr_slimjet_id = part_slimjetid[j];
     if (curr_slimjet_id == -1) {
-        part_dEta_particle_jet.push_back(0);
-        part_dPhi_particle_jet.push_back(0);
-        part_ptrel_particle_jet.push_back(1);
-        part_erel_particle_jet.push_back(1);
+        part_dEta_particle_slimjet.push_back(0);
+        part_dPhi_particle_slimjet.push_back(0);
+        part_ptrel_particle_slimjet.push_back(1);
+        part_erel_particle_slimjet.push_back(1);
     } else {
-        part_dEta_particle_jet.push_back(part_eta[j] - jet_eta[curr_slimjet_id]);
+        part_dEta_particle_slimjet.push_back(part_eta[j] - jet_eta[curr_slimjet_id]);
         double dphi = deltaPhi(part_phi[j], jet_phi[curr_slimjet_id]);
-        part_dPhi_particle_jet.push_back(dphi);
-        part_ptrel_particle_jet.push_back(part_pt[j]/jet_pt[curr_slimjet_id]);
-        part_erel_particle_jet.push_back(part_energy[j]/jet_energy[curr_slimjet_id]);
+        part_dPhi_particle_slimjet.push_back(dphi);
+        part_ptrel_particle_slimjet.push_back(part_pt[j]/jet_pt[curr_slimjet_id]);
+        part_erel_particle_slimjet.push_back(part_energy[j]/jet_energy[curr_slimjet_id]);
     }
 
     int curr_fatjet_id = part_fatjetid[j];
     if (curr_fatjet_id == -1) {
-        part_dEta_particle_jet.push_back(0);
-        part_dPhi_particle_jet.push_back(0);
-        part_ptrel_particle_jet.push_back(1);
-        part_erel_particle_jet.push_back(1);
+        part_dEta_particle_fatjet.push_back(0);
+        part_dPhi_particle_fatjet.push_back(0);
+        part_ptrel_particle_fatjet.push_back(1);
+        part_erel_particle_fatjet.push_back(1);
     } else {
-        part_dEta_particle_jet.push_back(part_eta[j] - jet_eta[curr_fatjet_id]);
+        part_dEta_particle_fatjet.push_back(part_eta[j] - jet_eta[curr_fatjet_id]);
         double dphi = deltaPhi(part_phi[j], jet_phi[curr_fatjet_id]);
-        part_dPhi_particle_jet.push_back(dphi);
-        part_ptrel_particle_jet.push_back(part_pt[j]/jet_pt[curr_fatjet_id]);
-        part_erel_particle_jet.push_back(part_energy[j]/jet_energy[curr_fatjet_id]);
+        part_dPhi_particle_fatjet.push_back(dphi);
+        part_ptrel_particle_fatjet.push_back(part_pt[j]/jet_pt[curr_fatjet_id]);
+        part_erel_particle_fatjet.push_back(part_energy[j]/jet_energy[curr_fatjet_id]);
     }
 } 
 
