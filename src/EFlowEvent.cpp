@@ -160,6 +160,62 @@ void EFlowEvent::FillTree() {
         }
     }
   
+    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, int, int >> particles;
+    for (size_t i = 0; i < part_pt.size(); ++i) {
+        particles.push_back(std::make_tuple(
+            part_pt[i], part_px[i], part_py[i], part_pz[i], part_energy[i], part_eta[i], part_phi[i],
+            part_charge[i], part_d0val[i], part_d0err[i], part_dzval[i], part_dzerr[i],
+            part_isChargedHadron[i], part_isNeutralHadron[i], part_isPhoton[i],
+            part_isElectron[i], part_isMuon[i], part_slimjetid[i], part_fatjetid[i]
+        ));
+    }
+
+    std::sort(particles.begin(), particles.end(), [](const auto &a, const auto &b) {
+        return std::get<0>(a) > std::get<0>(b);
+    });
+
+    part_px.clear();
+    part_py.clear();
+    part_pz.clear();
+    part_energy.clear();
+    part_pt.clear();
+    part_eta.clear();
+    part_phi.clear();
+    part_charge.clear();
+    part_d0val.clear();
+    part_d0err.clear();
+    part_dzval.clear();
+    part_dzerr.clear();
+    part_isChargedHadron.clear();
+    part_isNeutralHadron.clear();
+    part_isPhoton.clear();
+    part_isElectron.clear();
+    part_isMuon.clear();
+    part_slimjetid.clear();
+    part_fatjetid.clear();
+
+    for (const auto &p : particles) {
+        part_pt.push_back(std::get<0>(p));
+        part_px.push_back(std::get<1>(p));
+        part_py.push_back(std::get<2>(p));
+        part_pz.push_back(std::get<3>(p));
+        part_energy.push_back(std::get<4>(p));
+        part_eta.push_back(std::get<5>(p));
+        part_phi.push_back(std::get<6>(p));
+        part_charge.push_back(std::get<7>(p));
+        part_d0val.push_back(std::get<8>(p));
+        part_d0err.push_back(std::get<9>(p));
+        part_dzval.push_back(std::get<10>(p));
+        part_dzerr.push_back(std::get<11>(p));
+        part_isChargedHadron.push_back(std::get<12>(p));
+        part_isNeutralHadron.push_back(std::get<13>(p));
+        part_isPhoton.push_back(std::get<14>(p));
+        part_isElectron.push_back(std::get<15>(p));
+        part_isMuon.push_back(std::get<16>(p));
+        part_slimjetid.push_back(std::get<17>(p));
+        part_fatjetid.push_back(std::get<18>(p));
+    }
+    
  if (!fatjets.empty()) {
      jet_ration_nslimjet_nfatjet.push_back(static_cast<double>(slimjets.size()) / fatjets.size());
  }
