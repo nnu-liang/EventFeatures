@@ -20,27 +20,16 @@ EFlowEvent::EFlowEvent(EvenTLABEL label, ExRootTreeReader *reader) : EFlowObjs(r
     // m_fat_jet_builder = new JetBuilder(param_fat);
 }
 
-float event_px_tmp;
-float event_py_tmp;
-float event_pz_tmp;
-float event_energy_tmp;
-
 void EFlowEvent::FillTree() {
     CleanFeatures();
-    // * variables that stores the whole event info
-    TLorentzVector p_event(event_px_tmp, event_py_tmp, event_pz_tmp, event_energy_tmp);
-    event_px_tmp = 0;
-    event_py_tmp = 0;
-    event_pz_tmp = 0;
-    event_energy_tmp = 0;
     // * We first store the "particle" information
     EFlowObjs_t &objs = GetEFlowObjs();
     for (size_t i = 0; i < objs.size(); i++) {
         auto &part = objs[i];
-        event_px_tmp += part.px();
-        event_py_tmp += part.py();
-        event_pz_tmp += part.pz();
-        event_energy_tmp += part.e();
+        event_px += part.px();
+        event_py += part.py();
+        event_pz += part.pz();
+        event_energy += part.e();
         part_px.push_back(part.px());
         part_py.push_back(part.py());
         part_pz.push_back(part.pz());
@@ -97,6 +86,13 @@ void EFlowEvent::FillTree() {
         part_fatjetid.push_back(-1);   // *
     }
 
+    // * For the whole event
+    TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
+    event_nparticles = objs.size();
+    event_eta = p_event.Eta();
+    event_phi = p_event.Phi();
+    event_pt = p_event.Pt();
+
     // * Reconstruct jets
     int jet_id_tmp = 0;
     double dR[2] = {m_dR_slim, m_dR_fat};
@@ -119,7 +115,7 @@ void EFlowEvent::FillTree() {
             jet_nparticles.push_back(jet_particles.size());
             jet_dEta_jet_event.push_back(jet.eta() - p_event.Eta());
             jet_dPhi_jet_event.push_back(jet.delta_phi_to(p_event));
-            jet_erel_jet_event.push_back(jet.e() / event_energy_tmp);
+            jet_erel_jet_event.push_back(jet.e() / event_energy);
             int jet_ncharged_tmp = 0;
             int jet_nneutral_tmp = 0;
             double jet_E_charged = 0;
@@ -159,85 +155,19 @@ void EFlowEvent::FillTree() {
             jet_id_tmp += 1;
         }
     }
-  
-    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, int, int >> particles;
-    for (size_t i = 0; i < part_pt.size(); ++i) {
-        particles.push_back(std::make_tuple(
-            part_pt[i], part_px[i], part_py[i], part_pz[i], part_energy[i], part_eta[i], part_phi[i],
-            part_charge[i], part_d0val[i], part_d0err[i], part_dzval[i], part_dzerr[i],
-            part_isChargedHadron[i], part_isNeutralHadron[i], part_isPhoton[i],
-            part_isElectron[i], part_isMuon[i], part_slimjetid[i], part_fatjetid[i]
-        ));
-    }
 
-    std::sort(particles.begin(), particles.end(), [](const auto &a, const auto &b) {
-        return std::get<0>(a) > std::get<0>(b);
-    });
-
-    part_px.clear();
-    part_py.clear();
-    part_pz.clear();
-    part_energy.clear();
-    part_pt.clear();
-    part_eta.clear();
-    part_phi.clear();
-    part_charge.clear();
-    part_d0val.clear();
-    part_d0err.clear();
-    part_dzval.clear();
-    part_dzerr.clear();
-    part_isChargedHadron.clear();
-    part_isNeutralHadron.clear();
-    part_isPhoton.clear();
-    part_isElectron.clear();
-    part_isMuon.clear();
-    part_slimjetid.clear();
-    part_fatjetid.clear();
-
-    for (const auto &p : particles) {
-        part_pt.push_back(std::get<0>(p));
-        part_px.push_back(std::get<1>(p));
-        part_py.push_back(std::get<2>(p));
-        part_pz.push_back(std::get<3>(p));
-        part_energy.push_back(std::get<4>(p));
-        part_eta.push_back(std::get<5>(p));
-        part_phi.push_back(std::get<6>(p));
-        part_charge.push_back(std::get<7>(p));
-        part_d0val.push_back(std::get<8>(p));
-        part_d0err.push_back(std::get<9>(p));
-        part_dzval.push_back(std::get<10>(p));
-        part_dzerr.push_back(std::get<11>(p));
-        part_isChargedHadron.push_back(std::get<12>(p));
-        part_isNeutralHadron.push_back(std::get<13>(p));
-        part_isPhoton.push_back(std::get<14>(p));
-        part_isElectron.push_back(std::get<15>(p));
-        part_isMuon.push_back(std::get<16>(p));
-        part_slimjetid.push_back(std::get<17>(p));
-        part_fatjetid.push_back(std::get<18>(p));
-    }
+event_njets = jet_id_tmp;
     
  if (!fatjets.empty()) {
-     jet_ration_nslimjet_nfatjet.push_back(static_cast<double>(slimjets.size()) / fatjets.size());
+     jet_ration_nslimjet_nfatjet = static_cast<double>(slimjets.size()) / fatjets.size();
  }
-    // * For the whole event
-    // TLorentzVector p_event(event_px, event_py, event_pz, event_energy);
 
     for (size_t i = 0; i < objs.size(); i++) {
         auto &part = objs[i];
         part_dEta_particle_event.push_back(part.eta() - p_event.Eta());
-        part_erel_particle_event.push_back(part.e() / event_energy_tmp);
+        part_erel_particle_event.push_back(part.e() / event_energy);
         part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
     }
-
-event_px.push_back(event_px_tmp);
-event_py.push_back(event_py_tmp);
-event_pz.push_back(event_pz_tmp);
-event_energy.push_back(event_energy_tmp);
-event_nparticles.push_back(objs.size());
-event_njets.push_back(jet_id_tmp);
-event_eta.push_back(p_event.Eta());
-event_phi.push_back(p_event.Phi());
-event_pt.push_back(p_event.Pt());
 
 auto deltaPhi = [](double phi1, double phi2) {
     double dphi = phi1 - phi2;
@@ -323,6 +253,88 @@ for (size_t i = 0; i < 16; ++i) {
         }
     }
 }
+
+    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, int, int, float, float, float, float, float, float, float, float, float, float, float >> particles;
+    for (size_t i = 0; i < part_pt.size(); ++i) {
+        particles.push_back(std::make_tuple(
+            part_pt[i], part_px[i], part_py[i], part_pz[i], part_energy[i], part_eta[i], part_phi[i],
+            part_charge[i], part_d0val[i], part_d0err[i], part_dzval[i], part_dzerr[i],
+            part_isChargedHadron[i], part_isNeutralHadron[i], part_isPhoton[i],
+            part_isElectron[i], part_isMuon[i], part_slimjetid[i], part_fatjetid[i],
+            part_dEta_particle_slimjet[i], part_dPhi_particle_slimjet[i], part_ptrel_particle_slimjet[i], part_erel_particle_slimjet[i],
+            part_dEta_particle_fatjet[i], part_dPhi_particle_fatjet[i], part_ptrel_particle_fatjet[i], part_erel_particle_fatjet[i],
+            part_dEta_particle_event[i], part_erel_particle_event[i], part_dPhi_particle_event[i]
+        ));
+    }
+
+    std::sort(particles.begin(), particles.end(), [](const auto &a, const auto &b) {
+        return std::get<0>(a) > std::get<0>(b);
+    });
+
+    part_px.clear();
+    part_py.clear();
+    part_pz.clear();
+    part_energy.clear();
+    part_pt.clear();
+    part_eta.clear();
+    part_phi.clear();
+    part_charge.clear();
+    part_d0val.clear();
+    part_d0err.clear();
+    part_dzval.clear();
+    part_dzerr.clear();
+    part_isChargedHadron.clear();
+    part_isNeutralHadron.clear();
+    part_isPhoton.clear();
+    part_isElectron.clear();
+    part_isMuon.clear();
+    part_slimjetid.clear();
+    part_fatjetid.clear();
+    part_dPhi_particle_slimjet.clear();
+    part_dPhi_particle_fatjet.clear();
+    part_dPhi_particle_event.clear();
+    part_dEta_particle_slimjet.clear();
+    part_dEta_particle_fatjet.clear();
+    part_dEta_particle_event.clear();
+    part_ptrel_particle_slimjet.clear();
+    part_ptrel_particle_fatjet.clear();
+    part_ptrel_particle_event.clear();
+    part_erel_particle_event.clear();
+    part_erel_particle_slimjet.clear();
+    part_erel_particle_fatjet.clear();
+
+    for (const auto &p : particles) {
+        part_pt.push_back(std::get<0>(p));
+        part_px.push_back(std::get<1>(p));
+        part_py.push_back(std::get<2>(p));
+        part_pz.push_back(std::get<3>(p));
+        part_energy.push_back(std::get<4>(p));
+        part_eta.push_back(std::get<5>(p));
+        part_phi.push_back(std::get<6>(p));
+        part_charge.push_back(std::get<7>(p));
+        part_d0val.push_back(std::get<8>(p));
+        part_d0err.push_back(std::get<9>(p));
+        part_dzval.push_back(std::get<10>(p));
+        part_dzerr.push_back(std::get<11>(p));
+        part_isChargedHadron.push_back(std::get<12>(p));
+        part_isNeutralHadron.push_back(std::get<13>(p));
+        part_isPhoton.push_back(std::get<14>(p));
+        part_isElectron.push_back(std::get<15>(p));
+        part_isMuon.push_back(std::get<16>(p));
+        part_slimjetid.push_back(std::get<17>(p));
+        part_fatjetid.push_back(std::get<18>(p));
+        part_dEta_particle_slimjet.push_back(std::get<19>(p));
+        part_dPhi_particle_slimjet.push_back(std::get<20>(p));
+        part_ptrel_particle_slimjet.push_back(std::get<21>(p));
+        part_erel_particle_slimjet.push_back(std::get<22>(p));
+        part_dEta_particle_fatjet.push_back(std::get<23>(p));
+        part_dPhi_particle_fatjet.push_back(std::get<24>(p));
+        part_ptrel_particle_fatjet.push_back(std::get<25>(p));
+        part_erel_particle_fatjet.push_back(std::get<26>(p));
+        part_dEta_particle_event.push_back(std::get<27>(p));
+        part_erel_particle_event.push_back(std::get<28>(p));
+        part_dPhi_particle_event.push_back(std::get<29>(p));
+    }
 
     // * For the label
     SetEvenTLabel(m_label);

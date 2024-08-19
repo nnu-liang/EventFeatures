@@ -92,28 +92,19 @@ public:
     vf_t fatjet_phi;
     vf_t fatjet_energy;
     vf_t fatjet_pt;
-    vf_t event_px;
-    vf_t event_py;
-    vf_t event_pz;
-    vf_t event_energy;
-    vf_t event_pt;
-    vf_t event_eta;
-    vf_t event_phi;
-    vi_t event_nparticles;
-    vi_t event_njets;
-    vf_t jet_ration_nslimjet_nfatjet;
+
     
 
-   // float event_px;
-    //float event_py;
-    //float event_pz;
-    //float event_energy;
-    //float event_pt;
-    //float event_eta;
-    //float event_phi;
-    //float jet_ration_nslimjet_nfatjet;
-    //int32_t event_nparticles;
-    //int32_t event_njets;
+    float event_px;
+    float event_py;
+    float event_pz;
+    float event_energy;
+    float event_pt;
+    float event_eta;
+    float event_phi;
+    float jet_ration_nslimjet_nfatjet;
+    int32_t event_nparticles;
+    int32_t event_njets;
 
     bool label_hh_4b;
     bool label_tt_2b4j;
