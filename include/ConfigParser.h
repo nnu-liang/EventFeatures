@@ -47,7 +47,7 @@ private:
 
     void Parse_Line(const std::string &line, int const line_Number);
 
-    ConfigParser(){};
+    ConfigParser() {};
 
     ConfigParser(const std::string &fName);
 

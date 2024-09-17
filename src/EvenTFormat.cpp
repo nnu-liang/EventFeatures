@@ -71,7 +71,6 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(slimjet_eta);
     ADDBRANCH(fatjet_eta);
 
-
     ADDBRANCH(event_px);
     ADDBRANCH(event_py);
     ADDBRANCH(event_pz);

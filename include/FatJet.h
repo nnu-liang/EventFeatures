@@ -9,7 +9,7 @@
 class FatJet : public ParTFeatures {
 public:
     FatJet(ParTLABEL lab, ExRootTreeReader *);
-    ~FatJet(){};
+    ~FatJet() {};
 
     virtual void FillTree(int event_id = -1) override;
 
