@@ -80,7 +80,6 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(jet_dR_two_jets);
     ADDBRANCH(jet_dR_jet_event);
 
-
     ADDBRANCH(event_px);
     ADDBRANCH(event_py);
     ADDBRANCH(event_pz);

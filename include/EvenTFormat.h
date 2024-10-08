@@ -6,7 +6,18 @@
 class TTree;
 class TBranch;
 
-enum EvenTLABEL { l_Pred = -1, l_hh_4b = 0, l_tth_4b4j = 1, l_ttbb_4b4j = 2, l_hbb_4b = 3, l_4b = 4, l_2b2j = 5, l_tt_2b4j = 6, l_zz_4b = 7, l_zh_4b =8 };
+enum EvenTLABEL {
+    l_Pred = -1,
+    l_hh_4b = 0,
+    l_tth_4b4j = 1,
+    l_ttbb_4b4j = 2,
+    l_hbb_4b = 3,
+    l_4b = 4,
+    l_2b2j = 5,
+    l_tt_2b4j = 6,
+    l_zz_4b = 7,
+    l_zh_4b = 8
+};
 
 class EvenTFeatures {
 public:
@@ -101,8 +112,6 @@ public:
     vf_t jet_cosphi;
     vf_t jet_dR_two_jets;
     vf_t jet_dR_jet_event;
-
-    
 
     float event_px;
     float event_py;
@@ -207,7 +216,7 @@ private:
     TBranch *m_b_jet_cosphi;
     TBranch *m_b_jet_dR_two_jets;
     TBranch *m_b_jet_dR_jet_event;
-    
+
 
     TBranch *m_b_event_px;
     TBranch *m_b_event_py;

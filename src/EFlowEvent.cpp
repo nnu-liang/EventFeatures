@@ -1,5 +1,7 @@
 #include "EFlowEvent.h"
+
 #include <cmath>
+
 #include "ConfigParser.h"
 #include "FastJetWraper.h"  
 
@@ -182,12 +184,12 @@ event_njets = jet_id_tmp;
         part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
     }
 
-auto deltaPhi = [](double phi1, double phi2) {
-    double dphi = phi1 - phi2;
-    while (dphi > M_PI) dphi -= 2 * M_PI;
-    while (dphi < -M_PI) dphi += 2 * M_PI;
-    return dphi;
-};
+    auto deltaPhi = [](double phi1, double phi2) {
+        double dphi = phi1 - phi2;
+        while (dphi > M_PI) dphi -= 2 * M_PI;
+        while (dphi < -M_PI) dphi += 2 * M_PI;
+        return dphi;
+    };
 
 for (size_t j = 0; j < part_eta.size(); ++j) {
     int curr_slimjet_id = part_slimjetid[j];
@@ -240,13 +242,27 @@ for (size_t i = 0; i < 16; ++i) {
             jet_ptrel_slimjet_fatjet.push_back(0);
             jet_erel_slimjet_fatjet.push_back(0);
         } else {
-            jet_dEta_slimjet_fatjet.push_back(slimjet_eta[i] - fatjet_eta[j]);
-            jet_dPhi_slimjet_fatjet.push_back(deltaPhi(slimjet_phi[i], fatjet_phi[j]));
-            jet_ptrel_slimjet_fatjet.push_back(slimjet_pt[i]/fatjet_pt[j]);
-            jet_erel_slimjet_fatjet.push_back(slimjet_energy[i]/fatjet_energy[j]);
+            part_dEta_particle_slimjet.push_back(part_eta[j] - jet_eta[curr_slimjet_id]);
+            double dphi = deltaPhi(part_phi[j], jet_phi[curr_slimjet_id]);
+            part_dPhi_particle_slimjet.push_back(dphi);
+            part_ptrel_particle_slimjet.push_back(part_pt[j] / jet_pt[curr_slimjet_id]);
+            part_erel_particle_slimjet.push_back(part_energy[j] / jet_energy[curr_slimjet_id]);
+        }
+
+        int curr_fatjet_id = part_fatjetid[j];
+        if (curr_fatjet_id == -1) {
+            part_dEta_particle_fatjet.push_back(0);
+            part_dPhi_particle_fatjet.push_back(0);
+            part_ptrel_particle_fatjet.push_back(1);
+            part_erel_particle_fatjet.push_back(1);
+        } else {
+            part_dEta_particle_fatjet.push_back(part_eta[j] - jet_eta[curr_fatjet_id]);
+            double dphi = deltaPhi(part_phi[j], jet_phi[curr_fatjet_id]);
+            part_dPhi_particle_fatjet.push_back(dphi);
+            part_ptrel_particle_fatjet.push_back(part_pt[j] / jet_pt[curr_fatjet_id]);
+            part_erel_particle_fatjet.push_back(part_energy[j] / jet_energy[curr_fatjet_id]);
         }
     }
-}
 
     std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float >> particles;
     for (size_t i = 0; i < part_pt.size(); ++i) {
@@ -261,9 +277,64 @@ for (size_t i = 0; i < 16; ++i) {
         ));
     }
 
-    std::sort(particles.begin(), particles.end(), [](const auto &a, const auto &b) {
-        return std::get<0>(a) > std::get<0>(b);
-    });
+    for (size_t j = 1; j < jet_phi.size(); ++j) {
+        for (size_t i = 0; i < j; ++i) {
+            double dphi = deltaPhi(jet_phi[i], jet_phi[j]);
+            jet_dPhi_two_jets.push_back(dphi);
+        }
+    }
+
+    for (const auto &fatjet : fatjets) {
+        fatjet_eta.push_back(fatjet.eta());
+        fatjet_phi.push_back(fatjet.phi());
+        fatjet_energy.push_back(fatjet.e());
+        fatjet_pt.push_back(fatjet.pt());
+        //  auto fatjet_particles = fatjet.constituents();
+        //  fatjet_nparticles.push_back(jet_particles.size());
+    }
+
+    for (const auto &slimjet : slimjets) {
+        slimjet_eta.push_back(slimjet.eta());
+        slimjet_phi.push_back(slimjet.phi());
+        slimjet_energy.push_back(slimjet.e());
+        slimjet_pt.push_back(slimjet.pt());
+        //  auto slimjet_particles = slimjet.constituents();
+        //  slimjet_nparticles.push_back(jet_particles.size());
+    }
+
+    for (size_t i = 0; i < 16; ++i) {
+        for (size_t j = 0; j < 16; ++j) {
+            if (i >= slimjet_eta.size() || j >= fatjet_eta.size()) {
+                jet_dEta_slimjet_fatjet.push_back(0);
+                jet_dPhi_slimjet_fatjet.push_back(0);
+                jet_ptrel_slimjet_fatjet.push_back(0);
+                jet_erel_slimjet_fatjet.push_back(0);
+            } else {
+                jet_dEta_slimjet_fatjet.push_back(slimjet_eta[i] - fatjet_eta[j]);
+                jet_dPhi_slimjet_fatjet.push_back(deltaPhi(slimjet_phi[i], fatjet_phi[j]));
+                jet_ptrel_slimjet_fatjet.push_back(slimjet_pt[i] / fatjet_pt[j]);
+                jet_erel_slimjet_fatjet.push_back(slimjet_energy[i] / fatjet_energy[j]);
+            }
+        }
+    }
+
+    std::vector<
+        std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int,
+                   int, int, int, int, float, float, float, float, float, float, float, float, float, float, float>>
+        particles;
+    for (size_t i = 0; i < part_pt.size(); ++i) {
+        particles.push_back(std::make_tuple(
+            part_pt[i], part_px[i], part_py[i], part_pz[i], part_energy[i], part_eta[i], part_phi[i], part_charge[i],
+            part_d0val[i], part_d0err[i], part_dzval[i], part_dzerr[i], part_isChargedHadron[i],
+            part_isNeutralHadron[i], part_isPhoton[i], part_isElectron[i], part_isMuon[i], part_slimjetid[i],
+            part_fatjetid[i], part_dEta_particle_slimjet[i], part_dPhi_particle_slimjet[i],
+            part_ptrel_particle_slimjet[i], part_erel_particle_slimjet[i], part_dEta_particle_fatjet[i],
+            part_dPhi_particle_fatjet[i], part_ptrel_particle_fatjet[i], part_erel_particle_fatjet[i],
+            part_dEta_particle_event[i], part_erel_particle_event[i], part_dPhi_particle_event[i]));
+    }
+
+    std::sort(particles.begin(), particles.end(),
+              [](const auto &a, const auto &b) { return std::get<0>(a) > std::get<0>(b); });
 
     part_px.clear();
     part_py.clear();
