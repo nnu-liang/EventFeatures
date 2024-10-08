@@ -38,6 +38,11 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(part_dEta_particle_event);
     ADDBRANCH(part_ptrel_particle_event);
     ADDBRANCH(part_erel_particle_event);
+    ADDBRANCH(part_sinphi);
+    ADDBRANCH(part_cosphi);
+    ADDBRANCH(part_dR_particle_slimjet);
+    ADDBRANCH(part_dR_particle_fatjet);
+    ADDBRANCH(part_dR_particle_event);
 
     ADDBRANCH(jet_px);
     ADDBRANCH(jet_py);
@@ -70,6 +75,10 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(jet_dPhi_slimjet_fatjet);
     ADDBRANCH(slimjet_eta);
     ADDBRANCH(fatjet_eta);
+    ADDBRANCH(jet_sinphi);
+    ADDBRANCH(jet_cosphi);
+    ADDBRANCH(jet_dR_two_jets);
+    ADDBRANCH(jet_dR_jet_event);
 
 
     ADDBRANCH(event_px);
@@ -127,6 +136,11 @@ void EvenTFeatures::CleanFeatures() {
     part_erel_particle_event.clear();
     part_erel_particle_slimjet.clear();
     part_erel_particle_fatjet.clear();
+    part_sinphi.clear();
+    part_cosphi.clear();
+    part_dR_particle_slimjet.clear();
+    part_dR_particle_fatjet.clear();
+    part_dR_particle_event.clear();
 
     jet_px.clear();
     jet_py.clear();
@@ -158,6 +172,17 @@ void EvenTFeatures::CleanFeatures() {
     jet_dPhi_slimjet_fatjet.clear();
     slimjet_eta.clear();
     fatjet_eta.clear();
+    slimjet_phi.clear();
+    fatjet_phi.clear();
+    slimjet_energy.clear();
+    fatjet_energy.clear();
+    slimjet_pt.clear();
+    fatjet_pt.clear();
+    jet_sinphi.clear();
+    jet_cosphi.clear();
+    jet_dR_two_jets.clear();
+    jet_dR_jet_event.clear();
+    
     event_px = 0;
     event_py = 0;
     event_pz = 0;

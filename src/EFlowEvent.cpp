@@ -1,7 +1,7 @@
 #include "EFlowEvent.h"
 #include <cmath>
 #include "ConfigParser.h"
-#include "FastJetWraper.h"
+#include "FastJetWraper.h"  
 
 EFlowEvent::EFlowEvent(EvenTLABEL label, ExRootTreeReader *reader) : EFlowObjs(reader), m_label(label) {
     ConfigParser &gParser = ConfigParser::Get_Global_Parser();
@@ -21,6 +21,11 @@ EFlowEvent::EFlowEvent(EvenTLABEL label, ExRootTreeReader *reader) : EFlowObjs(r
 }
 
 void EFlowEvent::FillTree() {
+    auto normalize_phi = [](float phi) {
+        while (phi > M_PI) phi -= 2 * M_PI;
+        while (phi < -M_PI) phi += 2 * M_PI;
+        return phi;
+    };
     CleanFeatures();
     // * We first store the "particle" information
     EFlowObjs_t &objs = GetEFlowObjs();
@@ -36,7 +41,9 @@ void EFlowEvent::FillTree() {
         part_energy.push_back(part.e());
         part_pt.push_back(part.pt());
         part_eta.push_back(part.eta());
-        part_phi.push_back(part.phi());
+        part_phi.push_back(normalize_phi(part.phi()));
+	part_sinphi.push_back(sin(normalize_phi(part.phi())));
+	part_cosphi.push_back(cos(normalize_phi(part.phi())));
         auto part_info = part.user_info<ParticleExtraInfo>();
         part_charge.push_back(part_info.get_charge());
         part_d0val.push_back(part_info.get_d0());
@@ -96,8 +103,6 @@ void EFlowEvent::FillTree() {
     // * Reconstruct jets
     int jet_id_tmp = 0;
     double dR[2] = {m_dR_slim, m_dR_fat};
-    std::vector<fastjet::PseudoJet> slimjets;
-    std::vector<fastjet::PseudoJet> fatjets;
     for (size_t iR = 0; iR < 2; iR++) {
         JetAlgorithmParameters param(dR[iR], m_pt_min, m_beta, m_beta_softdrop, m_symmetry_cut_softdrop, m_R0_softdrop);
         JetBuilder builder(param);
@@ -110,7 +115,9 @@ void EFlowEvent::FillTree() {
             jet_energy.push_back(jet.e());
             jet_pt.push_back(jet.pt());
             jet_eta.push_back(jet.eta());
-            jet_phi.push_back(jet.phi());
+            jet_phi.push_back(normalize_phi(jet.phi()));
+	    jet_sinphi.push_back(sin(normalize_phi(jet.phi())));
+	    jet_cosphi.push_back(cos(normalize_phi(jet.phi())));
             auto jet_particles = jet.constituents();
             jet_nparticles.push_back(jet_particles.size());
             jet_dEta_jet_event.push_back(jet.eta() - p_event.Eta());
@@ -148,9 +155,15 @@ void EFlowEvent::FillTree() {
             jet_tau4.push_back(builder.Subjettiness(4, jet));
             jet_antikt_dR.push_back(dR[iR]);
             if (iR == 0) {
-                slimjets.push_back(jet);
+                slimjet_eta.push_back(jet.eta());
+                slimjet_phi.push_back(normalize_phi(jet.phi()));
+                slimjet_energy.push_back(jet.e());
+                slimjet_pt.push_back(jet.pt());
             } else {
-                fatjets.push_back(jet);
+                fatjet_eta.push_back(jet.eta());
+                fatjet_phi.push_back(normalize_phi(jet.phi()));
+                fatjet_energy.push_back(jet.e());
+                fatjet_pt.push_back(jet.pt());
             }
             jet_id_tmp += 1;
         }
@@ -158,8 +171,8 @@ void EFlowEvent::FillTree() {
 
 event_njets = jet_id_tmp;
     
- if (!fatjets.empty()) {
-     jet_ration_nslimjet_nfatjet = static_cast<double>(slimjets.size()) / fatjets.size();
+ if (!slimjet_eta.empty()) {
+     jet_ration_nslimjet_nfatjet = static_cast<double>(slimjet_eta.size()) / fatjet_eta.size();
  }
 
     for (size_t i = 0; i < objs.size(); i++) {
@@ -219,25 +232,6 @@ for (size_t j = 1; j < jet_phi.size(); ++j) {
     }
 }
 
-for (const auto& fatjet : fatjets) {
-    fatjet_eta.push_back(fatjet.eta());
-    fatjet_phi.push_back(fatjet.phi());
-    fatjet_energy.push_back(fatjet.e());
-    fatjet_pt.push_back(fatjet.pt());
-  //  auto fatjet_particles = fatjet.constituents();
-  //  fatjet_nparticles.push_back(jet_particles.size());
-}
-
-for (const auto& slimjet : slimjets) {
-    slimjet_eta.push_back(slimjet.eta()); 
-    slimjet_phi.push_back(slimjet.phi());
-    slimjet_energy.push_back(slimjet.e());
-    slimjet_pt.push_back(slimjet.pt());
-  //  auto slimjet_particles = slimjet.constituents();
-  //  slimjet_nparticles.push_back(jet_particles.size());
-
-}
-
 for (size_t i = 0; i < 16; ++i) {
     for (size_t j = 0; j < 16; ++j) {
         if (i >= slimjet_eta.size() || j >= fatjet_eta.size()) {
@@ -254,7 +248,7 @@ for (size_t i = 0; i < 16; ++i) {
     }
 }
 
-    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, int, int, float, float, float, float, float, float, float, float, float, float, float >> particles;
+    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float >> particles;
     for (size_t i = 0; i < part_pt.size(); ++i) {
         particles.push_back(std::make_tuple(
             part_pt[i], part_px[i], part_py[i], part_pz[i], part_energy[i], part_eta[i], part_phi[i],
@@ -263,7 +257,7 @@ for (size_t i = 0; i < 16; ++i) {
             part_isElectron[i], part_isMuon[i], part_slimjetid[i], part_fatjetid[i],
             part_dEta_particle_slimjet[i], part_dPhi_particle_slimjet[i], part_ptrel_particle_slimjet[i], part_erel_particle_slimjet[i],
             part_dEta_particle_fatjet[i], part_dPhi_particle_fatjet[i], part_ptrel_particle_fatjet[i], part_erel_particle_fatjet[i],
-            part_dEta_particle_event[i], part_erel_particle_event[i], part_dPhi_particle_event[i]
+            part_dEta_particle_event[i], part_erel_particle_event[i], part_dPhi_particle_event[i], part_sinphi[i], part_cosphi[i]
         ));
     }
 
@@ -302,6 +296,8 @@ for (size_t i = 0; i < 16; ++i) {
     part_erel_particle_event.clear();
     part_erel_particle_slimjet.clear();
     part_erel_particle_fatjet.clear();
+    part_sinphi.clear();
+    part_cosphi.clear();
 
     for (const auto &p : particles) {
         part_pt.push_back(std::get<0>(p));
@@ -334,8 +330,24 @@ for (size_t i = 0; i < 16; ++i) {
         part_dEta_particle_event.push_back(std::get<27>(p));
         part_erel_particle_event.push_back(std::get<28>(p));
         part_dPhi_particle_event.push_back(std::get<29>(p));
+	part_sinphi.push_back(std::get<30>(p));
+	part_cosphi.push_back(std::get<31>(p));
     }
+/*
+auto expand_phi_symmetric = [](std::vector<float>& phi_vector, float pi_value) {
+    std::vector<float> expanded_phi;
+    for (size_t i = 0; i < phi_vector.size(); ++i) {
+        if (phi_vector[i] >= -pi_value && phi_vector[i] <= -0.15 * pi_value) {
+            expanded_phi.push_back(phi_vector[i] + 2 * pi_value);
+        }
+    }
+    phi_vector.insert(phi_vector.end(), expanded_phi.begin(), expanded_phi.end());
+};
 
+double pi_value = M_PI;
+expand_phi_symmetric(part_phi, pi_value);
+expand_phi_symmetric(jet_phi, pi_value); 
+*/
     // * For the label
     SetEvenTLabel(m_label);
 

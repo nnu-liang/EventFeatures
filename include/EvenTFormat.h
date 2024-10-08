@@ -46,6 +46,11 @@ public:
     vf_t part_erel_particle_event;
     vf_t part_erel_particle_slimjet;
     vf_t part_erel_particle_fatjet;
+    vf_t part_sinphi;
+    vf_t part_cosphi;
+    vf_t part_dR_particle_slimjet;
+    vf_t part_dR_particle_fatjet;
+    vf_t part_dR_particle_event;
 
     // * Temporaily using following variables to store the jet id;
     // * Actually one can use vector<vector<int>>,
@@ -92,6 +97,10 @@ public:
     vf_t fatjet_phi;
     vf_t fatjet_energy;
     vf_t fatjet_pt;
+    vf_t jet_sinphi;
+    vf_t jet_cosphi;
+    vf_t jet_dR_two_jets;
+    vf_t jet_dR_jet_event;
 
     
 
@@ -157,6 +166,11 @@ private:
     TBranch *m_b_part_erel_particle_event;
     TBranch *m_b_part_erel_particle_slimjet;
     TBranch *m_b_part_erel_particle_fatjet;
+    TBranch *m_b_part_sinphi;
+    TBranch *m_b_part_cosphi;
+    TBranch *m_b_part_dR_particle_slimjet;
+    TBranch *m_b_part_dR_particle_fatjet;
+    TBranch *m_b_part_dR_particle_event;
 
     TBranch *m_b_jet_px;
     TBranch *m_b_jet_py;
@@ -189,6 +203,10 @@ private:
     TBranch *m_b_jet_dPhi_slimjet_fatjet;
     TBranch *m_b_slimjet_eta;
     TBranch *m_b_fatjet_eta;
+    TBranch *m_b_jet_sinphi;
+    TBranch *m_b_jet_cosphi;
+    TBranch *m_b_jet_dR_two_jets;
+    TBranch *m_b_jet_dR_jet_event;
     
 
     TBranch *m_b_event_px;
