@@ -79,6 +79,7 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(jet_cosphi);
     ADDBRANCH(jet_dR_two_jets);
     ADDBRANCH(jet_dR_jet_event);
+    ADDBRANCH(jet_btag);
 
     ADDBRANCH(event_px);
     ADDBRANCH(event_py);
@@ -181,6 +182,7 @@ void EvenTFeatures::CleanFeatures() {
     jet_cosphi.clear();
     jet_dR_two_jets.clear();
     jet_dR_jet_event.clear();
+    jet_btag.clear();
     
     event_px = 0;
     event_py = 0;

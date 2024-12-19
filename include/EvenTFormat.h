@@ -112,6 +112,7 @@ public:
     vf_t jet_cosphi;
     vf_t jet_dR_two_jets;
     vf_t jet_dR_jet_event;
+    vf_t jet_btag;
 
     float event_px;
     float event_py;
@@ -216,6 +217,7 @@ private:
     TBranch *m_b_jet_cosphi;
     TBranch *m_b_jet_dR_two_jets;
     TBranch *m_b_jet_dR_jet_event;
+    TBranch *m_b_jet_btag;
 
 
     TBranch *m_b_event_px;
