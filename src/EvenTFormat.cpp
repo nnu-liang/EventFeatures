@@ -100,6 +100,41 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(label_2b2j);
     ADDBRANCH(label_zz_4b);
     ADDBRANCH(label_zh_4b);
+
+    ADDBRANCH(ob_px);
+    ADDBRANCH(ob_py);
+    ADDBRANCH(ob_pz);
+    ADDBRANCH(ob_energy);
+    ADDBRANCH(ob_pt);
+    ADDBRANCH(ob_eta);
+    ADDBRANCH(ob_phi);
+    ADDBRANCH(ob_d0val);
+    ADDBRANCH(ob_d0err);
+    ADDBRANCH(ob_dzval);
+    ADDBRANCH(ob_dzerr);
+    ADDBRANCH(ob_tau1);
+    ADDBRANCH(ob_tau2);
+    ADDBRANCH(ob_tau3);
+    ADDBRANCH(ob_tau4);
+    ADDBRANCH(ob_sdmass);
+    ADDBRANCH(ob_antikt_dR);
+    ADDBRANCH(ob_nparticles);
+    ADDBRANCH(ob_NeutralEnergyFraction);
+    ADDBRANCH(ob_ChargeEnergyFraction);
+    ADDBRANCH(interaction_dEta);
+
+
+
+    ADDBRANCH(ob_charge);
+    ADDBRANCH(jet_charge);
+    ADDBRANCH(jet_ChargedHadron);
+    ADDBRANCH(jet_NeutralHadron);
+    ADDBRANCH(ob_ration_ChargedHadron);
+    ADDBRANCH(ob_ration_NeutralHadron);
+    ADDBRANCH(interaction_contain);
+    ADDBRANCH(interaction_ptrel);
+    ADDBRANCH(interaction_erel);
+    ADDBRANCH(interaction_dPhi);
 }
 
 void EvenTFeatures::FillBranches() { m_tree->Fill(); }
@@ -183,6 +218,42 @@ void EvenTFeatures::CleanFeatures() {
     jet_dR_two_jets.clear();
     jet_dR_jet_event.clear();
     jet_btag.clear();
+
+    ob_px.clear();
+    ob_py.clear();
+    ob_pz.clear();
+    ob_energy.clear();
+    ob_pt.clear();
+    ob_eta.clear();
+    ob_phi.clear();
+
+    ob_d0val.clear();
+    ob_d0err.clear();
+    ob_dzval.clear();
+    ob_dzerr.clear();
+    ob_tau1.clear();
+    ob_tau2.clear();
+    ob_tau3.clear();
+    ob_tau4.clear();
+    ob_sdmass.clear();
+    ob_antikt_dR.clear();
+    ob_nparticles.clear();
+    ob_NeutralEnergyFraction.clear();
+    ob_ChargeEnergyFraction.clear();
+
+
+
+    ob_charge.clear();
+    jet_charge.clear();
+    jet_ChargedHadron.clear();
+    jet_NeutralHadron.clear();
+    ob_ration_ChargedHadron.clear();
+    ob_ration_NeutralHadron.clear();
+    interaction_contain.clear();
+    interaction_dEta.clear();
+    interaction_dPhi.clear();
+    interaction_ptrel.clear();
+    interaction_erel.clear();
     
     event_px = 0;
     event_py = 0;

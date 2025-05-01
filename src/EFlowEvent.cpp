@@ -1,7 +1,9 @@
 #include "EFlowEvent.h"
 #include <cmath>
 #include "ConfigParser.h"
-#include "FastJetWraper.h"  
+#include "FastJetWraper.h"
+#include "TSystem.h"
+
 
 EFlowEvent::EFlowEvent(EvenTLABEL label, ExRootTreeReader *reader) : EFlowObjs(reader), m_label(label) {
     ConfigParser &gParser = ConfigParser::Get_Global_Parser();
@@ -42,8 +44,8 @@ void EFlowEvent::FillTree() {
         part_pt.push_back(part.pt());
         part_eta.push_back(part.eta());
         part_phi.push_back(normalize_phi(part.phi()));
-	part_sinphi.push_back(sin(normalize_phi(part.phi())));
-	part_cosphi.push_back(cos(normalize_phi(part.phi())));
+	    part_sinphi.push_back(sin(normalize_phi(part.phi())));
+	    part_cosphi.push_back(cos(normalize_phi(part.phi())));
         auto part_info = part.user_info<ParticleExtraInfo>();
         part_charge.push_back(part_info.get_charge());
         part_d0val.push_back(part_info.get_d0());
@@ -116,8 +118,8 @@ void EFlowEvent::FillTree() {
             jet_pt.push_back(jet.pt());
             jet_eta.push_back(jet.eta());
             jet_phi.push_back(normalize_phi(jet.phi()));
-	    jet_sinphi.push_back(sin(normalize_phi(jet.phi())));
-	    jet_cosphi.push_back(cos(normalize_phi(jet.phi())));
+	        jet_sinphi.push_back(sin(normalize_phi(jet.phi())));
+	        jet_cosphi.push_back(cos(normalize_phi(jet.phi())));
             auto jet_particles = jet.constituents();
             jet_nparticles.push_back(jet_particles.size());
             jet_dEta_jet_event.push_back(jet.eta() - p_event.Eta());
@@ -127,7 +129,10 @@ void EFlowEvent::FillTree() {
             int jet_nneutral_tmp = 0;
             double jet_E_charged = 0;
             double jet_E_neutral = 0;
-	    int b_tagged = 0;
+	        int b_tagged = 0;
+            float jet_charge_tmp = 0.0f;
+            int jet_nChargedHadron_tmp = 0;
+            int jet_nNeutralHadron_tmp = 0;
             for (size_t ip = 0; ip < jet_particles.size(); ip++) {
                 auto &part = jet_particles[ip];
                 auto part_info = part.user_info<ParticleExtraInfo>();
@@ -143,10 +148,24 @@ void EFlowEvent::FillTree() {
                 int part_index = part_info.get_index();
                 if (iR == 0) part_slimjetid[part_index] = jet_id_tmp;
                 if (iR == 1) part_fatjetid[part_index] = jet_id_tmp;
-		int pid = abs(part_info.get_pid());
-		if (pid == 5) {
-		    b_tagged = 1;}
+                jet_charge_tmp += part_charge_tmp;//累加算出jet的charge
+		        int pid = abs(part_info.get_pid());
+		        if (pid == 5) {
+		            b_tagged = 1;}
+                if (pid == 211 || pid == 321 || pid == 2212) {
+                    jet_nChargedHadron_tmp += 1;
+                }
+                if (pid == 130 || pid == 2112 || pid == 0) {
+                    jet_nNeutralHadron_tmp += 1;
+                }
             }
+            float chargedHadron_fraction = 0.0f;
+            float neutralHadron_fraction = 0.0f;
+            chargedHadron_fraction = static_cast<float>(jet_nChargedHadron_tmp) / jet_particles.size();
+            neutralHadron_fraction = static_cast<float>(jet_nNeutralHadron_tmp) / jet_particles.size();
+            jet_ChargedHadron.push_back(chargedHadron_fraction);
+            jet_NeutralHadron.push_back(neutralHadron_fraction);
+            jet_charge.push_back(jet_charge_tmp);
             jet_btag.push_back(b_tagged);
             jet_ncharged.push_back(jet_ncharged_tmp);
             jet_nneutral.push_back(jet_nneutral_tmp);
@@ -173,6 +192,162 @@ void EFlowEvent::FillTree() {
             jet_id_tmp += 1;
         }
     }
+auto deltaPhi = [](double phi1, double phi2) {
+    double dphi = phi1 - phi2;
+    while (dphi > M_PI) dphi -= 2 * M_PI;
+    while (dphi < -M_PI) dphi += 2 * M_PI;
+    return dphi;
+};
+
+ob_px.insert(ob_px.end(), part_px.begin(), part_px.end());
+ob_px.insert(ob_px.end(), jet_px.begin(), jet_px.end());
+
+ob_py.insert(ob_py.end(), part_py.begin(), part_py.end());
+ob_py.insert(ob_py.end(), jet_py.begin(), jet_py.end());
+
+
+ob_pz.insert(ob_pz.end(), part_pz.begin(), part_pz.end());
+ob_pz.insert(ob_pz.end(), jet_pz.begin(), jet_pz.end());
+
+ob_energy.insert(ob_energy.end(), part_energy.begin(), part_energy.end());
+ob_energy.insert(ob_energy.end(), jet_energy.begin(), jet_energy.end());
+
+ob_pt.insert(ob_pt.end(), part_pt.begin(), part_pt.end());
+ob_pt.insert(ob_pt.end(), jet_pt.begin(), jet_pt.end());
+
+ob_eta.insert(ob_eta.end(), part_eta.begin(), part_eta.end());
+ob_eta.insert(ob_eta.end(), jet_eta.begin(), jet_eta.end());
+
+ob_phi.insert(ob_phi.end(), part_phi.begin(), part_phi.end());
+ob_phi.insert(ob_phi.end(), jet_phi.begin(), jet_phi.end());
+
+ob_NeutralEnergyFraction.insert(ob_NeutralEnergyFraction.end(), part_isNeutralHadron.begin(), part_isNeutralHadron.end());
+ob_NeutralEnergyFraction.insert(ob_NeutralEnergyFraction.end(), jet_neutralenergyfraction.begin(), jet_neutralenergyfraction.end());
+
+ob_ChargeEnergyFraction.insert(ob_ChargeEnergyFraction.end(), part_isChargedHadron.begin(), part_isChargedHadron.end());
+ob_ChargeEnergyFraction.insert(ob_ChargeEnergyFraction.end(), jet_chargedenergyfraction.begin(), jet_chargedenergyfraction.end());
+
+
+ob_d0val.insert(ob_d0val.end(), part_d0val.begin(), part_d0val.end());
+ob_d0val.insert(ob_d0val.end(), jet_px.size(), 0.0f);
+
+ob_d0err.insert(ob_d0err.end(), part_d0err.begin(), part_d0err.end());
+ob_d0err.insert(ob_d0err.end(), jet_px.size(), 0.0f);  
+
+
+ob_dzval.insert(ob_dzval.end(), part_dzval.begin(), part_dzval.end());
+ob_dzval.insert(ob_dzval.end(), jet_px.size(), 0.0f);  
+
+
+ob_dzerr.insert(ob_dzerr.end(), part_dzerr.begin(), part_dzerr.end());
+ob_dzerr.insert(ob_dzerr.end(), jet_px.size(), 0.0f);  
+
+ob_tau1.insert(ob_tau1.end(), part_px.size(), 0.0f);
+ob_tau1.insert(ob_tau1.end(), jet_tau1.begin(), jet_tau1.end());
+
+ob_tau2.insert(ob_tau2.end(), part_px.size(), 0.0f);
+ob_tau2.insert(ob_tau2.end(), jet_tau2.begin(), jet_tau2.end());
+
+
+ob_tau3.insert(ob_tau3.end(), part_px.size(), 0.0f);
+ob_tau3.insert(ob_tau3.end(), jet_tau3.begin(), jet_tau3.end());
+
+
+ob_tau4.insert(ob_tau4.end(), part_px.size(), 0.0f);
+ob_tau4.insert(ob_tau4.end(), jet_tau4.begin(), jet_tau4.end());
+
+ob_sdmass.insert(ob_sdmass.end(), part_px.size(), 0.0f);  
+ob_sdmass.insert(ob_sdmass.end(), jet_sdmass.begin(), jet_sdmass.end()); 
+
+
+ob_antikt_dR.insert(ob_antikt_dR.end(), part_px.size(), 0.0f);  
+ob_antikt_dR.insert(ob_antikt_dR.end(), jet_antikt_dR.begin(), jet_antikt_dR.end());
+
+
+ob_nparticles.insert(ob_nparticles.end(), part_px.size(), 1.0f);  
+ob_nparticles.insert(ob_nparticles.end(), jet_nparticles.begin(), jet_nparticles.end());
+
+
+ob_charge.insert(ob_charge.end(), part_charge.begin(), part_charge.end());
+ob_charge.insert(ob_charge.end(), jet_charge.begin(), jet_charge.end());
+ob_ration_ChargedHadron.insert(
+    ob_ration_ChargedHadron.end(),
+    part_isChargedHadron.begin(),
+    part_isChargedHadron.end()
+);
+ob_ration_ChargedHadron.insert(
+    ob_ration_ChargedHadron.end(),
+    jet_ChargedHadron.begin(),
+    jet_ChargedHadron.end()
+);
+
+ob_ration_NeutralHadron.insert(
+    ob_ration_NeutralHadron.end(),
+    part_isNeutralHadron.begin(),
+    part_isNeutralHadron.end()
+);
+ob_ration_NeutralHadron.insert(
+    ob_ration_NeutralHadron.end(),
+    jet_NeutralHadron.begin(),
+    jet_NeutralHadron.end()
+);
+
+
+interaction_dEta.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+ for (size_t i = 0; i < ob_px.size(); ++i) {
+     for (size_t j = i; j < ob_px.size(); ++j) {
+         float delta = ob_eta[i] - ob_eta[j];
+         interaction_dEta[i][j] = delta;
+         interaction_dEta[j][i] = delta; 
+     }
+ }
+interaction_dPhi.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+ for (size_t i = 0; i < ob_px.size(); ++i) {
+     for (size_t j = i; j < ob_px.size(); ++j) {
+         float dphi = deltaPhi(ob_phi[i], ob_phi[j]);
+         interaction_dPhi[i][j] = dphi;
+         interaction_dPhi[j][i] = dphi; 
+     }
+ }
+interaction_ptrel.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+ for (size_t i = 0; i < ob_px.size(); ++i) {
+     for (size_t j = i; j < ob_px.size(); ++j) {
+         float ptrel = ob_pt[i]/ob_pt[j];
+         interaction_ptrel[i][j] = ptrel;
+         interaction_ptrel[j][i] = ptrel; 
+     }
+ }
+interaction_erel.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+ for (size_t i = 0; i < ob_px.size(); ++i) {
+     for (size_t j = i; j < ob_px.size(); ++j) {
+         float erel = ob_energy[i]/ob_energy[j];
+         interaction_erel[i][j] = erel;
+         interaction_erel[j][i] = erel; 
+     }
+ }
+interaction_contain.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+for (size_t i = 0; i < part_px.size(); ++i) {
+    int slimjetid = part_slimjetid[i];
+    int fatjetid = part_fatjetid[i];
+
+    if (slimjetid != -1) {
+        size_t jet_idx = part_px.size() + slimjetid;
+        if (jet_idx < ob_px.size()) {
+            interaction_contain[i][jet_idx] = 1.0f;
+            interaction_contain[jet_idx][i] = 1.0f;
+        }
+    }
+
+    if (fatjetid != -1) {
+        size_t jet_idx = part_px.size() + fatjetid;
+        if (jet_idx < ob_px.size()) {
+            interaction_contain[i][jet_idx] = 1.0f;
+            interaction_contain[jet_idx][i] = 1.0f;
+        }
+    }
+}
+
+ 
 
 event_njets = jet_id_tmp;
     
@@ -186,13 +361,6 @@ event_njets = jet_id_tmp;
         part_erel_particle_event.push_back(part.e() / event_energy);
         part_dPhi_particle_event.push_back(part.delta_phi_to(p_event));
     }
-
-auto deltaPhi = [](double phi1, double phi2) {
-    double dphi = phi1 - phi2;
-    while (dphi > M_PI) dphi -= 2 * M_PI;
-    while (dphi < -M_PI) dphi += 2 * M_PI;
-    return dphi;
-};
 
 for (size_t j = 0; j < part_eta.size(); ++j) {
     int curr_slimjet_id = part_slimjetid[j];
@@ -253,13 +421,13 @@ for (size_t i = 0; i < 16; ++i) {
     }
 }
 
-    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float >> particles;
+    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float >> particles;
     for (size_t i = 0; i < part_pt.size(); ++i) {
         particles.push_back(std::make_tuple(
             part_pt[i], part_px[i], part_py[i], part_pz[i], part_energy[i], part_eta[i], part_phi[i],
             part_charge[i], part_d0val[i], part_d0err[i], part_dzval[i], part_dzerr[i],
             part_isChargedHadron[i], part_isNeutralHadron[i], part_isPhoton[i],
-            part_isElectron[i], part_isMuon[i], part_slimjetid[i], part_fatjetid[i],
+            part_isElectron[i], part_isMuon[i],
             part_dEta_particle_slimjet[i], part_dPhi_particle_slimjet[i], part_ptrel_particle_slimjet[i], part_erel_particle_slimjet[i],
             part_dEta_particle_fatjet[i], part_dPhi_particle_fatjet[i], part_ptrel_particle_fatjet[i], part_erel_particle_fatjet[i],
             part_dEta_particle_event[i], part_erel_particle_event[i], part_dPhi_particle_event[i], part_sinphi[i], part_cosphi[i]
@@ -287,8 +455,8 @@ for (size_t i = 0; i < 16; ++i) {
     part_isPhoton.clear();
     part_isElectron.clear();
     part_isMuon.clear();
-    part_slimjetid.clear();
-    part_fatjetid.clear();
+   // part_slimjetid.clear();
+   // part_fatjetid.clear();
     part_dPhi_particle_slimjet.clear();
     part_dPhi_particle_fatjet.clear();
     part_dPhi_particle_event.clear();
@@ -322,37 +490,23 @@ for (size_t i = 0; i < 16; ++i) {
         part_isPhoton.push_back(std::get<14>(p));
         part_isElectron.push_back(std::get<15>(p));
         part_isMuon.push_back(std::get<16>(p));
-        part_slimjetid.push_back(std::get<17>(p));
-        part_fatjetid.push_back(std::get<18>(p));
-        part_dEta_particle_slimjet.push_back(std::get<19>(p));
-        part_dPhi_particle_slimjet.push_back(std::get<20>(p));
-        part_ptrel_particle_slimjet.push_back(std::get<21>(p));
-        part_erel_particle_slimjet.push_back(std::get<22>(p));
-        part_dEta_particle_fatjet.push_back(std::get<23>(p));
-        part_dPhi_particle_fatjet.push_back(std::get<24>(p));
-        part_ptrel_particle_fatjet.push_back(std::get<25>(p));
-        part_erel_particle_fatjet.push_back(std::get<26>(p));
-        part_dEta_particle_event.push_back(std::get<27>(p));
-        part_erel_particle_event.push_back(std::get<28>(p));
-        part_dPhi_particle_event.push_back(std::get<29>(p));
-	part_sinphi.push_back(std::get<30>(p));
-	part_cosphi.push_back(std::get<31>(p));
+       // part_slimjetid.push_back(std::get<17>(p));
+       // part_fatjetid.push_back(std::get<18>(p));
+        part_dEta_particle_slimjet.push_back(std::get<17>(p));
+        part_dPhi_particle_slimjet.push_back(std::get<18>(p));
+        part_ptrel_particle_slimjet.push_back(std::get<19>(p));
+        part_erel_particle_slimjet.push_back(std::get<20>(p));
+        part_dEta_particle_fatjet.push_back(std::get<21>(p));
+        part_dPhi_particle_fatjet.push_back(std::get<22>(p));
+        part_ptrel_particle_fatjet.push_back(std::get<23>(p));
+        part_erel_particle_fatjet.push_back(std::get<24>(p));
+        part_dEta_particle_event.push_back(std::get<25>(p));
+        part_erel_particle_event.push_back(std::get<26>(p));
+        part_dPhi_particle_event.push_back(std::get<27>(p));
+	part_sinphi.push_back(std::get<28>(p));
+	part_cosphi.push_back(std::get<29>(p));
     }
-/*
-auto expand_phi_symmetric = [](std::vector<float>& phi_vector, float pi_value) {
-    std::vector<float> expanded_phi;
-    for (size_t i = 0; i < phi_vector.size(); ++i) {
-        if (phi_vector[i] >= -pi_value && phi_vector[i] <= -0.15 * pi_value) {
-            expanded_phi.push_back(phi_vector[i] + 2 * pi_value);
-        }
-    }
-    phi_vector.insert(phi_vector.end(), expanded_phi.begin(), expanded_phi.end());
-};
 
-double pi_value = M_PI;
-expand_phi_symmetric(part_phi, pi_value);
-expand_phi_symmetric(jet_phi, pi_value); 
-*/
     // * For the label
     SetEvenTLabel(m_label);
 

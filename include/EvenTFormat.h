@@ -24,6 +24,9 @@ public:
     typedef std::vector<float> vf_t;
     typedef std::vector<int32_t> vi_t;
     typedef std::vector<vi_t> vvi_t;
+    typedef std::vector<std::vector<float>> vvf_t;
+
+
 
     EvenTFeatures() {};
     ~EvenTFeatures() {};
@@ -113,6 +116,42 @@ public:
     vf_t jet_dR_two_jets;
     vf_t jet_dR_jet_event;
     vf_t jet_btag;
+
+    vf_t ob_px;
+    vf_t ob_py;
+    vf_t ob_pz;
+    vf_t ob_energy;
+    vf_t ob_pt;
+    vf_t ob_eta;
+    vf_t ob_phi;
+    vf_t ob_d0val;
+    vf_t ob_d0err;
+    vf_t ob_dzval;
+    vf_t ob_dzerr;
+
+    vf_t ob_tau1;
+    vf_t ob_tau2;
+    vf_t ob_tau3;
+    vf_t ob_tau4;
+    vf_t ob_sdmass;
+    vf_t ob_antikt_dR;
+    vf_t ob_nparticles;
+    vf_t ob_NeutralEnergyFraction;
+    vf_t ob_ChargeEnergyFraction;
+
+
+
+    vf_t ob_charge;
+    vf_t jet_charge;
+    vf_t jet_ChargedHadron;
+    vf_t jet_NeutralHadron;
+    vf_t ob_ration_ChargedHadron;
+    vf_t ob_ration_NeutralHadron;
+    vvf_t interaction_contain;
+    vvf_t interaction_dEta;
+    vvf_t interaction_dPhi;
+    vvf_t interaction_ptrel;
+    vvf_t interaction_erel;
 
     float event_px;
     float event_py;
@@ -239,6 +278,42 @@ private:
     TBranch *m_b_label_2b2j;
     TBranch *m_b_label_zz_4b;
     TBranch *m_b_label_zh_4b;
+
+    TBranch *m_b_ob_px;
+    TBranch *m_b_ob_py;
+    TBranch *m_b_ob_pz;
+    TBranch *m_b_ob_energy;
+    TBranch *m_b_ob_pt;
+    TBranch *m_b_ob_eta;
+    TBranch *m_b_ob_phi;
+    TBranch *m_b_ob_d0val;
+    TBranch *m_b_ob_d0err;
+    TBranch *m_b_ob_dzval;
+    TBranch *m_b_ob_dzerr;
+
+    TBranch *m_b_ob_tau1;
+    TBranch *m_b_ob_tau2;
+    TBranch *m_b_ob_tau3;
+    TBranch *m_b_ob_tau4;
+    TBranch *m_b_ob_sdmass;
+    TBranch *m_b_ob_antikt_dR;
+    TBranch *m_b_ob_nparticles;
+    TBranch *m_b_ob_NeutralEnergyFraction;
+    TBranch *m_b_ob_ChargeEnergyFraction;
+
+
+
+    TBranch *m_b_ob_charge;
+    TBranch *m_b_jet_charge;
+    TBranch *m_b_jet_ChargedHadron;
+    TBranch *m_b_jet_NeutralHadron;
+    TBranch *m_b_ob_ration_ChargedHadron;
+    TBranch *m_b_ob_ration_NeutralHadron;
+    TBranch *m_b_interaction_contain;
+    TBranch *m_b_interaction_dEta;
+    TBranch *m_b_interaction_dPhi;
+    TBranch *m_b_interaction_ptrel;
+    TBranch *m_b_interaction_erel;
 };
 
 #endif  // EVENT_FORMAT_H_
