@@ -478,18 +478,19 @@ for (size_t i = 0; i < 16; ++i) {
     }
 }
 
-    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float >> particles;
+    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, int, int, int, int, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float >> particles;
     for (size_t i = 0; i < part_pt.size(); ++i) {
         particles.push_back(std::make_tuple(
             part_pt[i], part_px[i], part_py[i], part_pz[i], part_energy[i], part_eta[i], part_phi[i],
             part_charge[i], part_d0val[i], part_d0err[i], part_dzval[i], part_dzerr[i],
             part_isChargedHadron[i], part_isNeutralHadron[i], part_isPhoton[i],
-            part_isElectron[i], part_isMuon[i],
+            part_isElectron[i], part_isMuon[i], part_slimjetid[i], part_fatjetid[i],
             part_dEta_particle_slimjet[i], part_dPhi_particle_slimjet[i], part_ptrel_particle_slimjet[i], part_erel_particle_slimjet[i],
             part_dEta_particle_fatjet[i], part_dPhi_particle_fatjet[i], part_ptrel_particle_fatjet[i], part_erel_particle_fatjet[i],
             part_dEta_particle_event[i], part_erel_particle_event[i], part_dPhi_particle_event[i], part_sinphi[i], part_cosphi[i]
         ));
     }
+
 
     std::sort(particles.begin(), particles.end(), [](const auto &a, const auto &b) {
         return std::get<0>(a) > std::get<0>(b);
@@ -512,8 +513,8 @@ for (size_t i = 0; i < 16; ++i) {
     part_isPhoton.clear();
     part_isElectron.clear();
     part_isMuon.clear();
-   // part_slimjetid.clear();
-   // part_fatjetid.clear();
+    part_slimjetid.clear();
+    part_fatjetid.clear();
     part_dPhi_particle_slimjet.clear();
     part_dPhi_particle_fatjet.clear();
     part_dPhi_particle_event.clear();
@@ -547,21 +548,75 @@ for (size_t i = 0; i < 16; ++i) {
         part_isPhoton.push_back(std::get<14>(p));
         part_isElectron.push_back(std::get<15>(p));
         part_isMuon.push_back(std::get<16>(p));
-       // part_slimjetid.push_back(std::get<17>(p));
-       // part_fatjetid.push_back(std::get<18>(p));
-        part_dEta_particle_slimjet.push_back(std::get<17>(p));
-        part_dPhi_particle_slimjet.push_back(std::get<18>(p));
-        part_ptrel_particle_slimjet.push_back(std::get<19>(p));
-        part_erel_particle_slimjet.push_back(std::get<20>(p));
-        part_dEta_particle_fatjet.push_back(std::get<21>(p));
-        part_dPhi_particle_fatjet.push_back(std::get<22>(p));
-        part_ptrel_particle_fatjet.push_back(std::get<23>(p));
-        part_erel_particle_fatjet.push_back(std::get<24>(p));
-        part_dEta_particle_event.push_back(std::get<25>(p));
-        part_erel_particle_event.push_back(std::get<26>(p));
-        part_dPhi_particle_event.push_back(std::get<27>(p));
-	part_sinphi.push_back(std::get<28>(p));
-	part_cosphi.push_back(std::get<29>(p));
+        part_slimjetid.push_back(std::get<17>(p));
+        part_fatjetid.push_back(std::get<18>(p));
+        part_dEta_particle_slimjet.push_back(std::get<19>(p));
+        part_dPhi_particle_slimjet.push_back(std::get<20>(p));
+        part_ptrel_particle_slimjet.push_back(std::get<21>(p));
+        part_erel_particle_slimjet.push_back(std::get<22>(p));
+        part_dEta_particle_fatjet.push_back(std::get<23>(p));
+        part_dPhi_particle_fatjet.push_back(std::get<24>(p));
+        part_ptrel_particle_fatjet.push_back(std::get<25>(p));
+        part_erel_particle_fatjet.push_back(std::get<26>(p));
+        part_dEta_particle_event.push_back(std::get<27>(p));
+        part_erel_particle_event.push_back(std::get<28>(p));
+        part_dPhi_particle_event.push_back(std::get<29>(p));
+        part_sinphi.push_back(std::get<30>(p));
+        part_cosphi.push_back(std::get<31>(p));
+
+    }
+
+    std::vector<std::tuple<float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float>> ob_objects;
+
+    for (size_t i = 0; i < ob_pt.size(); ++i) {
+        ob_objects.emplace_back(
+            ob_pt[i], ob_px[i], ob_py[i], ob_pz[i], ob_energy[i], ob_eta[i], ob_phi[i],
+            ob_NeutralEnergyFraction[i], ob_ChargeEnergyFraction[i],
+            ob_d0val[i], ob_d0err[i], ob_dzval[i], ob_dzerr[i],
+            ob_tau1[i], ob_tau2[i], ob_tau3[i], ob_tau4[i]
+        );
+    }
+
+    std::sort(ob_objects.begin(), ob_objects.end(), [](const auto &a, const auto &b) {
+        return std::get<0>(a) > std::get<0>(b);  // 根据 ob_pt 排序
+    });
+
+    ob_pt.clear();
+    ob_px.clear();
+    ob_py.clear();
+    ob_pz.clear();
+    ob_energy.clear();
+    ob_eta.clear();
+    ob_phi.clear();
+    ob_NeutralEnergyFraction.clear();
+    ob_ChargeEnergyFraction.clear();
+    ob_d0val.clear();
+    ob_d0err.clear();
+    ob_dzval.clear();
+    ob_dzerr.clear();
+    ob_tau1.clear();
+    ob_tau2.clear();
+    ob_tau3.clear();
+    ob_tau4.clear();
+
+    for (const auto &obj : ob_objects) {
+        ob_pt.push_back(std::get<0>(obj));
+        ob_px.push_back(std::get<1>(obj));
+        ob_py.push_back(std::get<2>(obj));
+        ob_pz.push_back(std::get<3>(obj));
+        ob_energy.push_back(std::get<4>(obj));
+        ob_eta.push_back(std::get<5>(obj));
+        ob_phi.push_back(std::get<6>(obj));
+        ob_NeutralEnergyFraction.push_back(std::get<7>(obj));
+        ob_ChargeEnergyFraction.push_back(std::get<8>(obj));
+        ob_d0val.push_back(std::get<9>(obj));
+        ob_d0err.push_back(std::get<10>(obj));
+        ob_dzval.push_back(std::get<11>(obj));
+        ob_dzerr.push_back(std::get<12>(obj));
+        ob_tau1.push_back(std::get<13>(obj));
+        ob_tau2.push_back(std::get<14>(obj));
+        ob_tau3.push_back(std::get<15>(obj));
+        ob_tau4.push_back(std::get<16>(obj));
     }
 
     // * For the label
