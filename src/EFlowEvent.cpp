@@ -133,6 +133,9 @@ void EFlowEvent::FillTree() {
             float jet_charge_tmp = 0.0f;
             int jet_nChargedHadron_tmp = 0;
             int jet_nNeutralHadron_tmp = 0;
+            int jet_nPhoton_tmp = 0;
+            int jet_nElectron_tmp = 0;
+            int jet_nMuon_tmp = 0;
             for (size_t ip = 0; ip < jet_particles.size(); ip++) {
                 auto &part = jet_particles[ip];
                 auto part_info = part.user_info<ParticleExtraInfo>();
@@ -158,13 +161,33 @@ void EFlowEvent::FillTree() {
                 if (pid == 130 || pid == 2112 || pid == 0) {
                     jet_nNeutralHadron_tmp += 1;
                 }
+                if (pid == 22) {
+                    jet_nPhoton_tmp += 1;
+                }
+                if (pid == 11) {
+                    jet_nElectron_tmp += 1;
+                }
+                if (pid == 13) {
+                    jet_nMuon_tmp += 1;
+                }
             }
+
             float chargedHadron_fraction = 0.0f;
             float neutralHadron_fraction = 0.0f;
+            float photon_fraction = 0.0f;
+            float electron_fraction = 0.0f;
+            float muon_fraction = 0.0f;
+
             chargedHadron_fraction = static_cast<float>(jet_nChargedHadron_tmp) / jet_particles.size();
             neutralHadron_fraction = static_cast<float>(jet_nNeutralHadron_tmp) / jet_particles.size();
+            photon_fraction = static_cast<float>(jet_nPhoton_tmp) / jet_particles.size();
+            electron_fraction = static_cast<float>(jet_nElectron_tmp) / jet_particles.size();
+            muon_fraction = static_cast<float>(jet_nMuon_tmp) / jet_particles.size();
             jet_ChargedHadron.push_back(chargedHadron_fraction);
             jet_NeutralHadron.push_back(neutralHadron_fraction);
+            jet_Photon.push_back(photon_fraction);
+            jet_Electron.push_back(electron_fraction);
+            jet_Muon.push_back(muon_fraction);
             jet_charge.push_back(jet_charge_tmp);
             jet_btag.push_back(b_tagged);
             jet_ncharged.push_back(jet_ncharged_tmp);
@@ -292,39 +315,73 @@ ob_ration_NeutralHadron.insert(
     jet_NeutralHadron.end()
 );
 
+ob_ration_Photon.insert(
+    ob_ration_Photon.end(),
+    part_isPhoton.begin(),
+    part_isPhoton.end()
+);
+ob_ration_Photon.insert(
+    ob_ration_Photon.end(),
+    jet_Photon.begin(),
+    jet_Photon.end()
+);
 
-interaction_dEta.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
- for (size_t i = 0; i < ob_px.size(); ++i) {
-     for (size_t j = i; j < ob_px.size(); ++j) {
-         float delta = ob_eta[i] - ob_eta[j];
-         interaction_dEta[i][j] = delta;
-         interaction_dEta[j][i] = delta; 
-     }
- }
-interaction_dPhi.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
- for (size_t i = 0; i < ob_px.size(); ++i) {
-     for (size_t j = i; j < ob_px.size(); ++j) {
-         float dphi = deltaPhi(ob_phi[i], ob_phi[j]);
-         interaction_dPhi[i][j] = dphi;
-         interaction_dPhi[j][i] = dphi; 
-     }
- }
-interaction_ptrel.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
- for (size_t i = 0; i < ob_px.size(); ++i) {
-     for (size_t j = i; j < ob_px.size(); ++j) {
-         float ptrel = ob_pt[i]/ob_pt[j];
-         interaction_ptrel[i][j] = ptrel;
-         interaction_ptrel[j][i] = ptrel; 
-     }
- }
-interaction_erel.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
- for (size_t i = 0; i < ob_px.size(); ++i) {
-     for (size_t j = i; j < ob_px.size(); ++j) {
-         float erel = ob_energy[i]/ob_energy[j];
-         interaction_erel[i][j] = erel;
-         interaction_erel[j][i] = erel; 
-     }
- }
+ob_ration_Electron.insert(
+    ob_ration_Electron.end(),
+    part_isElectron.begin(),
+    part_isElectron.end()
+);
+ob_ration_Electron.insert(
+    ob_ration_Electron.end(),
+    jet_Electron.begin(),
+    jet_Electron.end()
+);
+
+ob_ration_Muon.insert(
+    ob_ration_Muon.end(),
+    part_isMuon.begin(),
+    part_isMuon.end()
+);
+ob_ration_Muon.insert(
+    ob_ration_Muon.end(),
+    jet_Muon.begin(),
+    jet_Muon.end()
+);
+
+
+
+// interaction_dEta.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+//  for (size_t i = 0; i < ob_px.size(); ++i) {
+//      for (size_t j = i; j < ob_px.size(); ++j) {
+//          float delta = ob_eta[i] - ob_eta[j];
+//          interaction_dEta[i][j] = delta;
+//          interaction_dEta[j][i] = delta; 
+//      }
+//  }
+// interaction_dPhi.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+//  for (size_t i = 0; i < ob_px.size(); ++i) {
+//      for (size_t j = i; j < ob_px.size(); ++j) {
+//          float dphi = deltaPhi(ob_phi[i], ob_phi[j]);
+//          interaction_dPhi[i][j] = dphi;
+//          interaction_dPhi[j][i] = dphi; 
+//      }
+//  }
+// interaction_ptrel.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+//  for (size_t i = 0; i < ob_px.size(); ++i) {
+//      for (size_t j = i; j < ob_px.size(); ++j) {
+//          float ptrel = ob_pt[i]/ob_pt[j];
+//          interaction_ptrel[i][j] = ptrel;
+//          interaction_ptrel[j][i] = ptrel; 
+//      }
+//  }
+// interaction_erel.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
+//  for (size_t i = 0; i < ob_px.size(); ++i) {
+//      for (size_t j = i; j < ob_px.size(); ++j) {
+//          float erel = ob_energy[i]/ob_energy[j];
+//          interaction_erel[i][j] = erel;
+//          interaction_erel[j][i] = erel; 
+//      }
+//  }
 interaction_contain.resize(ob_px.size(), std::vector<float>(ob_px.size(), 0.0f));
 for (size_t i = 0; i < part_px.size(); ++i) {
     int slimjetid = part_slimjetid[i];

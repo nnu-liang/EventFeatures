@@ -147,6 +147,12 @@ public:
     vf_t jet_NeutralHadron;
     vf_t ob_ration_ChargedHadron;
     vf_t ob_ration_NeutralHadron;
+    vf_t jet_Photon;
+    vf_t jet_Electron;
+    vf_t jet_Muon;
+    vf_t ob_ration_Photon;
+    vf_t ob_ration_Electron;
+    vf_t ob_ration_Muon;
     vvf_t interaction_contain;
     vvf_t interaction_dEta;
     vvf_t interaction_dPhi;
@@ -309,6 +315,12 @@ private:
     TBranch *m_b_jet_NeutralHadron;
     TBranch *m_b_ob_ration_ChargedHadron;
     TBranch *m_b_ob_ration_NeutralHadron;
+    TBranch *m_b_jet_Photon;
+    TBranch *m_b_jet_Electron;
+    TBranch *m_b_jet_Muon;
+    TBranch *m_b_ob_ration_Photon;
+    TBranch *m_b_ob_ration_Electron;
+    TBranch *m_b_ob_ration_Muon;
     TBranch *m_b_interaction_contain;
     TBranch *m_b_interaction_dEta;
     TBranch *m_b_interaction_dPhi;

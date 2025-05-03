@@ -131,6 +131,12 @@ void EvenTFeatures::SetUpBranches(TTree *t) {
     ADDBRANCH(jet_NeutralHadron);
     ADDBRANCH(ob_ration_ChargedHadron);
     ADDBRANCH(ob_ration_NeutralHadron);
+    ADDBRANCH(jet_Photon);
+    ADDBRANCH(jet_Electron);
+    ADDBRANCH(jet_Muon);
+    ADDBRANCH(ob_ration_Photon);
+    ADDBRANCH(ob_ration_Electron);
+    ADDBRANCH(ob_ration_Muon);
     ADDBRANCH(interaction_contain);
     ADDBRANCH(interaction_ptrel);
     ADDBRANCH(interaction_erel);
@@ -249,6 +255,12 @@ void EvenTFeatures::CleanFeatures() {
     jet_NeutralHadron.clear();
     ob_ration_ChargedHadron.clear();
     ob_ration_NeutralHadron.clear();
+    jet_Photon.clear();
+    jet_Electron.clear();
+    jet_Muon.clear();
+    ob_ration_Photon.clear();
+    ob_ration_Electron.clear();
+    ob_ration_Muon.clear();
     interaction_contain.clear();
     interaction_dEta.clear();
     interaction_dPhi.clear();
