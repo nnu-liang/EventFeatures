@@ -1,0 +1,15 @@
+"g g > h h" /data/lxiao/cut-based-data/kappa-3 Sig_HH 30 /data/lxiao/cut-based-data/kappa-3 1 /home/lxiao/Tagging/inputs/madspin_card.dat -3
+"g g > h h" /data/lxiao/cut-based-data/kappa-4 Sig_HH 30 /data/lxiao/cut-based-data/kappa-4 1 /home/lxiao/Tagging/inputs/madspin_card.dat -4
+"g g > h h" /data/lxiao/cut-based-data/kappa-5 Sig_HH 30 /data/lxiao/cut-based-data/kappa-5 1 /home/lxiao/Tagging/inputs/madspin_card.dat -5
+"g g > h h" /data/lxiao/cut-based-data/kappa10 Sig_HH 30 /data/lxiao/cut-based-data/kappa10 1 /home/lxiao/Tagging/inputs/madspin_card.dat 10
+"g g > h h" /data/lxiao/cut-based-data/kappa11 Sig_HH 30 /data/lxiao/cut-based-data/kappa11 1 /home/lxiao/Tagging/inputs/madspin_card.dat 11
+"g g > h h" /data/lxiao/cut-based-data/kappa12 Sig_HH 30 /data/lxiao/cut-based-data/kappa12 1 /home/lxiao/Tagging/inputs/madspin_card.dat 12
+"g g > h h" /data/lxiao/cut-based-data/kappa13 Sig_HH 30 /data/lxiao/cut-based-data/kappa13 1 /home/lxiao/Tagging/inputs/madspin_card.dat 13
+"g g > h h" /data/lxiao/cut-based-data/kappa14 Sig_HH 30 /data/lxiao/cut-based-data/kappa14 1 /home/lxiao/Tagging/inputs/madspin_card.dat 14
+"g g > h h" /data/lxiao/cut-based-data/kappa15 Sig_HH 30 /data/lxiao/cut-based-data/kappa15 1 /home/lxiao/Tagging/inputs/madspin_card.dat 15
+"g g > h h" /data/lxiao/cut-based-data/kappa16 Sig_HH 30 /data/lxiao/cut-based-data/kappa16 1 /home/lxiao/Tagging/inputs/madspin_card.dat 16
+"g g > h h" /data/lxiao/cut-based-data/kappa17 Sig_HH 30 /data/lxiao/cut-based-data/kappa17 1 /home/lxiao/Tagging/inputs/madspin_card.dat 17
+"g g > h h" /data/lxiao/cut-based-data/kappa18 Sig_HH 30 /data/lxiao/cut-based-data/kappa18 1 /home/lxiao/Tagging/inputs/madspin_card.dat 18
+"g g > h h" /data/lxiao/cut-based-data/kappa20 Sig_HH 30 /data/lxiao/cut-based-data/kappa20 1 /home/lxiao/Tagging/inputs/madspin_card.dat 20
+"g g > h h" /data/lxiao/cut-based-data/kappa19 Sig_HH 30 /data/lxiao/cut-based-data/kappa19 1 /home/lxiao/Tagging/inputs/madspin_card.dat 19
+

@@ -1,0 +1,9 @@
+"p p > z z , z > b b~ , z > b b~" /data/lxiao/cut-based-data/bkg_zz Bkg_ZZ 300 /data/lxiao/cut-based-data/bkg_zz 0 /home/lxiao/Tagging/inputs/madspin_card.dat
+"p p > z h , z > b b~ , h > b b~" /data/lxiao/cut-based-data/bkg_zh Bkg_ZH 300 /data/lxiao/cut-based-data/bkg_zh 0 /home/lxiao/Tagging/inputs/madspin_card.dat
+"p p > t t~ , (t > b w+ , w+ > j j) , (t~ > b~ w- , w- > j j)" /data/lxiao/cut-based-data/bkg_tt Bkg_TT 300 /data/lxiao/cut-based-data/bkg_tt 0 /home/lxiao/Tagging/inputs/madspin_card.dat
+"p p > t t~ h , h > b b~ , (t > b w+ , w+ > j j) , (t~ > b~ w- , w- > j j)" /data/lxiao/cut-based-data/bkg_tth Bkg_TTH 300 /data/lxiao/cut-based-data/bkg_tth 0 /home/lxiao/Tagging/inputs/madspin_card.dat
+"p p > t t~ b b~ , (t > b w+ , w+ > j j) , (t~ > b~ w- , w- > j j)" /data/lxiao/cut-based-data/bkg_tt2b Bkg_TT2B 300 /data/lxiao/cut-based-data/bkg_tt2b 0 /home/lxiao/Tagging/inputs/madspin_card.dat
+"p p > b b~ h , h > b b~" /data/lxiao/cut-based-data/bkg_h2b Bkg_H2B 300 /data/lxiao/cut-based-data/bkg_h2b 0 /home/lxiao/Tagging/inputs/madspin_card.dat
+"p p > b b~ b b~" /data/lxiao/cut-based-data/bkg_4b Bkg_4B 300 /data/lxiao/cut-based-data/bkg_4b 0 /home/lxiao/Tagging/inputs/madspin_card.dat
+"p p > b b~ j j" /data/lxiao/cut-based-data/bkg_2b2j Bkg_2B2J 300 /data/lxiao/cut-based-data/bkg_2b2j 0 /home/lxiao/Tagging/inputs/madspin_card.dat
+"g g > h h [noborn = QCD]" /data/lxiao/cut-based-data/sig_hh Sig_HH 300 /data/lxiao/cut-based-data/sig_hh 1 /home/lxiao/Tagging/inputs/madspin_card.dat 
